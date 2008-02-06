@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<componentPackage>
+    <component id="DockableHDividedBox" class="net.goozo.mx.dockalbe.DockableHDividedBox"/>
+    <component id="DockableVDividedBox" class="net.goozo.mx.dockalbe.DockableVDividedBox"/>
+    <component id="DockablePanel" class="net.goozo.mx.dockalbe.DockablePanel"/>
+    <component id="DockableTabNavigator" class="net.goozo.mx.dockalbe.DockableTabNavigator"/>
+</componentPackage>
