@@ -9,8 +9,9 @@ package net.goozo.mx.dockalbe
 	import mx.containers.Canvas;
 	import mx.core.Application;
 	import mx.core.Container;
-	import mx.core.UIComponent;
+	import mx.core.IFlexDisplayObject;
 	import mx.core.ScrollPolicy;
+	import mx.core.UIComponent;
 	import mx.managers.CursorManager;
 	import mx.managers.DragManager;
 	import mx.styles.CSSStyleDeclaration;
@@ -33,7 +34,7 @@ package net.goozo.mx.dockalbe
 		
 		private var dragInitiator:UIComponent;
 		
-		private var dockHint:DockHint = null;
+		private var dockHint:IFlexDisplayObject = null;
 		private var dragImage:DragProxyImage = null;
 		private var cursorClass:Class = null;
 		private var cursorID:int = CursorManager.NO_CURSOR;
@@ -97,18 +98,46 @@ package net.goozo.mx.dockalbe
 		}				
 	
 
-		private function createDockHint():DockHint
+		private function createDockHint():IFlexDisplayObject
 		{
-
-			dockHint = new DockHint();
-			dragInitiator.systemManager.popUpChildren.addChild(dockHint);	
+			var dockHintClass:Class=null;
+			var inColor:uint=0xFFFF00;
+			var outColor:uint=0xFF0000;
+			var hintRadius:Number=5;
+			var hintAlpha:Number=-1;
+			
+			var dockHintStyle:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DockHint");
+			
+			if(dockHintStyle!=null)
+			{
+				dockHintClass = dockHintStyle.getStyle("hintSkin");
+				inColor = dockHintStyle.getStyle("hintColorIn");
+				outColor = dockHintStyle.getStyle("hintColorOut");
+				hintAlpha = dockHintStyle.getStyle("hintAlpha");
+				hintRadius = dockHintStyle.getStyle("hintRadius");
+			}
+			
+			if(dockHintClass == DockHint)
+			{
+				dockHint = new DockHint(inColor,outColor,hintRadius);
+			}else if(dockHintClass != null){
+				dockHint = new dockHintClass();
+			}else{
+				dockHint = new DockHint();
+			}
+			
+			if(hintAlpha>=0)
+			{
+				dockHint.alpha = hintAlpha;
+			}
+			dragInitiator.systemManager.popUpChildren.addChild(DisplayObject(dockHint));	
 			return dockHint;
 		}
 		protected function removeDockHint():void
 		{
 			if(dockHint)
 			{
-				dockHint.parent.removeChild(dockHint);
+				dockHint.parent.removeChild(DisplayObject(dockHint));
 				dockHint=null;				
 			}
 		}
@@ -223,7 +252,7 @@ package net.goozo.mx.dockalbe
 			{
 				newTarget = targetList[targetIndex];
 				if( newTarget != dockHint 
-				 && !dockHint.contains(newTarget)
+				 //&& !dockHint.contains(newTarget)
 				 && newTarget != dragImage 
 				 && !dragImage.contains(newTarget)
 				){
@@ -243,7 +272,7 @@ package net.goozo.mx.dockalbe
 			this.state = state;
 			if( state==TAB || state==PANEL )
 			{
-				dockHint.setDockHint(finder.lastAccepter,finder.lastPosition);
+				setHintposition(finder.lastAccepter,finder.lastPosition);
 				dockHint.visible=true;
 			}else{
 				dockHint.visible = false;
@@ -255,7 +284,31 @@ package net.goozo.mx.dockalbe
 				dragImage.alpha = 0.5;
 			}			
 		}
-	   public function updateCursor(state:String):void
+		private function setHintposition(dragAaccepter:UIComponent,position:String):void
+		{
+			var fullArea:Rectangle=dragAaccepter.getRect(dockHint.parent);
+			switch(position)
+			{
+				case DockManager.LEFT:
+					fullArea.width/=4;
+					break;
+				case DockManager.TOP:
+					fullArea.height/=4;
+					break;
+				case DockManager.RIGHT:
+					fullArea.x += 3*fullArea.width/4
+					fullArea.width/=4;
+					break;
+				case DockManager.BOTTOM:
+					fullArea.y += 3*fullArea.height/4
+					fullArea.height/=4;
+					break;
+			}
+			dockHint.width = fullArea.width;
+			dockHint.height = fullArea.height;
+			dockHint.move(fullArea.x,fullArea.y);			
+		}
+	   	public function updateCursor(state:String):void
 	    {
 	        var newCursorClass:Class;
 			var styleSheet:CSSStyleDeclaration =

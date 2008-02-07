@@ -3,6 +3,7 @@ package net.goozo.mx.dockalbe
 	import mx.core.Container;
 	import mx.core.UIComponent;
 	
+[ExcludeClass]	
 	internal class DockHelper
 	{		
 		public static function replace(dest:UIComponent,source:UIComponent):void
