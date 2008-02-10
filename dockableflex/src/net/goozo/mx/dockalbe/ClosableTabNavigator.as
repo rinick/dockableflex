@@ -17,22 +17,7 @@ package net.goozo.mx.dockalbe
 		{
 			super();
 		}
-	    override protected function createChildren():void
-	    {
-	        if (!tabBar)
-	        {
-	        	tabBar = new ClosableTabBar();
-		        tabBar.name = "tabBar";
-	            tabBar.focusEnabled = false;
-	            tabBar.styleName = new StyleProxy(this, tabBarStyleFilters);
-	            rawChildren.addChild(tabBar);        	
-	        	super.createChildren();
-	        	
 
-	        }else{
-	        	super.createChildren();
-	        }	        	
-	    }
 	    override public function set selectedIndex(value:int):void
 	    {
 	    	super.selectedIndex = value;

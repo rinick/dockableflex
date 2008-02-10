@@ -1,15 +1,13 @@
 
 DockablePanel
 {
-	/* backgroundAlpha: 1.0; controls the alpha of the panel content area. */
 	backgroundColor: #FFFFFF;
 	backgroundAlpha:0.4;
-	borderAlpha: 0.4; /* controls the alpha of the panel top, bottom and sides. */
+	borderAlpha: 0.4;
 	borderColor: #E2E2E2;
 	borderSkin: ClassReference("mx.skins.halo.PanelSkin");
 	borderStyle: "solid";
 	borderThickness: 0;
-	/* borderThicknessBottom is NaN */
 	borderThicknessLeft: 10;
 	borderThicknessRight: 10;
 	borderThicknessTop: 2;
@@ -27,18 +25,49 @@ DockablePanel
 	titleStyleName: "windowStyles";
 	headerHeight:18;                  
 }
+FloatPanel {
+	backgroundColor: #FFFFFF;
+	backgroundAlpha:0.4;
+	borderAlpha: 0.4;
+	borderColor: #E2E2E2;
+	borderSkin: ClassReference("mx.skins.halo.PanelSkin");
+	borderStyle: "solid";
+	borderThickness: 0;
+	borderThicknessLeft: 10;
+	borderThicknessRight: 10;
+	borderThicknessTop: 2;
+	cornerRadius: 4;
+	dropShadowEnabled: true;
+	paddingBottom: 4;
+	paddingLeft: 5;
+	paddingRight: 5;
+	paddingTop: 18;
+	resizeEndEffect: "Dissolve";
+	resizeStartEffect: "Dissolve";
+	roundedBottomCorners: false;
+	statusStyleName: "windowStatus";
+	titleBackgroundSkin: ClassReference("mx.skins.halo.TitleBackground");
+	titleStyleName: "windowStyles";
+	headerHeight:18;
 
+	resizeButtonOverSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonDown");
+	resizeButtonUpSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonUp");
+	resizeButtonDownSkin: Embed(source="ResizeButton.swf",symbol="ResizeButtonDown");
+	resizeButtonWidth: 7;
+	resizeButtonHeight: 7;
+}
 
 DockableTabNavigator
 {
 	backgroundColor: #FFFFFF;
-	borderColor: #AAB3B3;	/* used for edge of tab's content area, */
+	borderColor: #AAB3B3;
 	borderStyle: "solid";
 	horizontalAlign: "left";
 	horizontalGap: -1;
 	paddingTop: 0;
 	tabOffset: 0;
 }
+
 DockHint {
 	hintSkin:ClassReference("net.goozo.mx.dockalbe.DockHint");
 	hintColorIn: #00FFFF;
