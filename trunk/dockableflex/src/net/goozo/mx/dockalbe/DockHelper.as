@@ -31,25 +31,7 @@ package net.goozo.mx.dockalbe
 			dest.parent.removeChild(dest);			
 		}
 		
-		public static function createPanel(item:Container):DockablePanel
-		{
-			var newPanel:DockablePanel = new DockablePanel();
-			var newTabNav:DockableTabNavigator = new DockableTabNavigator();
-			newPanel.addChild(newTabNav);
-			if( item.parent!=null && item.parent is DockableTabNavigator )
-			{
-				var oldTabNav:DockableTabNavigator = DockableTabNavigator(item.parent);
-				newTabNav.allowAutoCreatePanel = oldTabNav.allowAutoCreatePanel;
-				newTabNav.allowFloat = oldTabNav.allowFloat;
-				newTabNav.allowMultiTab = oldTabNav.allowMultiTab;
-				
-				item.parent.removeChild(item);
-			}
-			
-			newPanel.addChild(item);
-			return newPanel;
-		}
-		
+	
 			
 	}
 }

@@ -345,17 +345,7 @@ package net.goozo.mx.dockalbe
 		
 		private function handleDockComplete(e:MouseEvent):void
 		{
-			var newPanel:DockablePanel;
-			if( state==PANEL || state==FLOAT )
-			{
-				if(dockSource.dockType==DockManager.DRAGTAB)
-				{
-					newPanel=DockHelper.createPanel(dockSource.targetChild);
-				}else{
-					newPanel = dockSource.targetPanel;
-					//newPanel.parent.removeChild(newPanel);
-				}
-			}
+
 			switch(state)
 			{
 				case TAB:
@@ -365,32 +355,58 @@ package net.goozo.mx.dockalbe
 				}
 				case PANEL:
 				{
-					movePanel(newPanel,Container(finder.lastAccepter),finder.lastPosition);
+					movePanel(Container(finder.lastAccepter),finder.lastPosition);
 					break;
 				}
 				case FLOAT:
 				{
-					floatPanel(newPanel);
+					floatPanel();
 					break;
 				}				
 			}
 			endDock();
 		}	
-		public function movePanel(dragPanel:DockablePanel,accepter:Container,side:String):void
+		public function movePanel(accepter:Container,side:String):void
 		{
+			var newPanel:DockablePanel;
+			if(dockSource.dockType==DockManager.DRAGTAB)
+			{
+				newPanel=new DockablePanel(dockSource.targetChild);
+			}else if(dockSource.dockType==DockManager.DRAGPANNEL){
+				newPanel = dockSource.targetPanel;
+			}else{
+				newPanel = new DockablePanel();
+			}
 			switch(side)
 			{
 				case DockManager.LEFT:
 				case DockManager.RIGHT:
-					insertPanelH(dragPanel,accepter,side);
+					insertPanelH(newPanel,accepter,side);
 					return;
 				case DockManager.TOP:
 				case DockManager.BOTTOM:
-					insertPanelV(dragPanel,accepter,side);
+					insertPanelV(newPanel,accepter,side);
 					return;
 			}
 		}
-		
+		private function floatPanel():void
+		{
+			var newPanel:FloatPanel;
+			if(dockSource.dockType==DockManager.DRAGTAB)
+			{
+				newPanel = new FloatPanel(dockSource.targetChild);
+			}else if(dockSource.dockType==DockManager.DRAGPANNEL){
+				newPanel = new FloatPanel(dockSource.targetTabNav);
+			}else{
+				newPanel = new FloatPanel(); 
+			}
+			
+			DockManager.app.addChild(newPanel);
+			
+			var boundsRect:Rectangle = dragImage.getBounds(app);
+			newPanel.move(boundsRect.x,boundsRect.y);
+		}
+				
 		private function insertPanelH(dragPanel:DockablePanel,accepter:Container,side:String):void
 		{
 			var dAccepter:DockableHDividedBox;
@@ -450,12 +466,6 @@ package net.goozo.mx.dockalbe
 			dAccepter.removeSelf();	
 		}
 		
-		private function floatPanel(dragPanel:DockablePanel):void
-		{
-			dragPanel.setTypeFloat();
-			
-			var boundsRect:Rectangle = dragImage.getBounds(app);
-			dragPanel.move(boundsRect.x,boundsRect.y);
-		}
+
 	}
 }

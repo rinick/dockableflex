@@ -4,6 +4,7 @@ package net.goozo.mx.dockalbe
 	import flash.geom.Rectangle;
 	
 	import mx.controls.Button;
+	import mx.controls.TabBar;
 	import mx.core.Container;
 	import mx.core.UIComponent;
 
@@ -11,7 +12,7 @@ package net.goozo.mx.dockalbe
 	internal class DockFinder
 	{
 		public var lastBtn:Button;
-		public var lastTabBar:ClosableTabBar;
+		public var lastTabBar:TabBar;
 		public var lastTabNav:DockableTabNavigator;
 		public var lastPanel:DockablePanel;
 		
@@ -43,9 +44,9 @@ package net.goozo.mx.dockalbe
 					nFind |= 4;
 					break;
 				}
-				else if(getTar is ClosableTabBar)
+				else if(getTar is TabBar)
 				{
-					lastTabBar = ClosableTabBar(getTar);
+					lastTabBar = TabBar(getTar);
 					nFind |= 2;
 				}
 				else if(getTar is Button)
