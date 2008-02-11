@@ -39,57 +39,6 @@ package net.goozo.mx.dockalbe
 		}
 		
 		
-//		private var dragStarter:DragStarter=null;
-//		
-//		private var dockAccepter:Container;
-		       		
-//		private function setTypeDock():void
-//		{
-//			if(_dockState != DOCKING)
-//			{
-//				_dockState = DOCKING;
-//				dragStarter.startListen(startDragDockPanel);	
-//			}			
-//		}
-
-//		public function setTypeFloat():void
-//		{			
-//			if(_dockState != FLOATING)
-//			{
-//				_dockState = FLOATING;
-//				if(parent!=null)
-//				{
-//					parent.removeChild(this);
-//				}
-//				DockManager.app.addChild(this);
-//				tabNav.toFloat();
-//							
-//				dragStarter.startListen(startDragFloatPanel);
-//				
-//				addEventListener(MouseEvent.MOUSE_DOWN,floatClickPanel);
-//				callLater(fixFloatSize);
-//			}
-//		}
-//		private function fixFloatSize():void
-//		{
-//			if(Application(Application.application).initialized)
-//			{
-//				var tMinWidth:Number = minWidth;
-//				var tMinHeight:Number = minHeight;
-//				if( width < tMinWidth
-//				 && width < tMinWidth*2
-//				 && height < tMinHeight
-//				 && height < tMinHeight*2
-//				){
-//					width = width;
-//					height = height;
-//				}else{
-//					width = Math.max(DockManager.app.width/3,tMinWidth);
-//					height = Math.max(DockManager.app.height/3,tMinHeight);					
-//				}
-//			}
-//		}
-		
 		public function ClosablePanel( fromChild:Container = null )
 		{
 			super();
@@ -156,35 +105,6 @@ package net.goozo.mx.dockalbe
 			showCloseButton = e.useCloseButton;
 		}
 
-		
-//		override protected function createChildren():void
-//		{
-//			super.createChildren();
-//			
-//			if(dragStarter==null)
-//			{
-//				dragStarter = new DragStarter(titleBar);
-//			}			
-//			
-//			
-//			if(parent ==DockManager.app
-//			 && _dockState!=FLOATING
-//			 && isNaN(percentHeight)
-//			 && isNaN(percentWidth)
-//			 && !Application(Application.application).initialized
-//			){
-//				_dockState = TOFLOATING;
-//			}
-//			switch(_dockState)
-//			{
-//				case TODOCKING:
-//					setTypeDock();
-//					break;
-//				case TOFLOATING:
-//					setTypeFloat();
-//					break;
-//			}					
-//		}
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
 			var retObj:DisplayObject = super.removeChild(child);
@@ -224,54 +144,6 @@ package net.goozo.mx.dockalbe
 			}
 		}
 
-//		private function startDragDockPanel(e:MouseEvent):void
-//		{      
-//            var dockSource:DockSource = new DockSource(DockManager.DRAGPANNEL, tabNav, tabNav.dockId);
-//            dockSource.targetPanel = this;
-//            
-//            dockSource.allowMultiTab = allowMultiTab;
-//			dockSource.allowFloat = allowFloat;
-//			dockSource.allowAutoCreatePanel = allowAutoCreatePanel;
-//			
-//            DockManager.doDock(this,dockSource,e);			
-//		}
-//		public function dockAsk(source:DockSource, target:UIComponent, position:String):Boolean
-//		{
-//			if( ( target!=this || source.targetPanel!=this ) 
-//			 && _dockState==DOCKING
-//			 && ( tabNav.numChildren!=1 || source.targetTabNav!=tabNav )
-//			){
-//				return true;
-//			}else{
-//				return false;
-//			}
-//		}
-//		
-//		private function startDragFloatPanel(e:MouseEvent):void
-//		{
-//			startDrag();
-//			stage.addEventListener(MouseEvent.MOUSE_UP,stopDragFloatPanel);
-//		}
-//		private function stopDragFloatPanel(e:MouseEvent):void
-//		{
-//			stage.removeEventListener(MouseEvent.MOUSE_UP,stopDragFloatPanel);
-//			stage.removeEventListener(MouseEvent.MOUSE_MOVE,ajustFloatSize);
-//			stopDrag();
-//		}
-//		private function floatClickPanel(e:MouseEvent):void
-//		{
-//			parent.setChildIndex(this,parent.numChildren-1);
-//			if( mouseX<width && mouseX>width-6 && mouseY<height && mouseY>height-6 )
-//			{
-//				stage.addEventListener(MouseEvent.MOUSE_MOVE,ajustFloatSize);
-//				stage.addEventListener(MouseEvent.MOUSE_UP,stopDragFloatPanel);
-//			}
-//		}
-//		private function ajustFloatSize(e:MouseEvent):void
-//		{
-//			width = Math.max(mouseX+3,minWidth);
-//			height = Math.max(mouseY+3,minHeight);
-//		}
 		private function handleCloseTab(e:Event):void
 		{
 			tabNav.closeTab();
