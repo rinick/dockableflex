@@ -424,7 +424,6 @@ package net.goozo.mx.dockalbe
 			dragPanel.percentWidth = accepter.percentWidth/4;
 			accepter.percentWidth *= 0.75;
 			
-			dAccepter.autoRemove = false;
 			switch(side)
 			{
 				case DockManager.LEFT:
@@ -434,7 +433,7 @@ package net.goozo.mx.dockalbe
 					dAccepter.addChildAt(dragPanel,accepterIndex+1);
 					return;				
 			}
-			dAccepter.removeSelf();	
+
 		}
 		private function insertPanelV(dragPanel:DockablePanel,accepter:Container,side:String):void
 		{
@@ -453,7 +452,6 @@ package net.goozo.mx.dockalbe
 			dragPanel.percentHeight = accepter.percentHeight/4;
 			accepter.percentHeight *= 0.75;
 			
-			dAccepter.autoRemove = false;
 			switch(side)
 			{
 				case DockManager.TOP:
@@ -463,7 +461,6 @@ package net.goozo.mx.dockalbe
 					dAccepter.addChildAt(dragPanel,accepterIndex+1);
 					return;				
 			}
-			dAccepter.removeSelf();	
 		}
 		
 

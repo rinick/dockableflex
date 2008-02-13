@@ -19,28 +19,28 @@ package net.goozo.mx.dockalbe
 			super.createChildren();
 			DockManager.newDockableApp(this);
 		}	
-		internal var autoRemove:Boolean = true;
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
 			var retObj:DisplayObject = super.removeChild(child);
-			if(autoRemove)
-			{
-				removeSelf();
-			}
+
+			callLater(removeSelf);
+			
 			return retObj;
 		}
-		public function removeSelf():void
+		private function removeSelf():void
 		{
-			autoRemove = true;
 			if( numChildren == 0 )
 			{
-				parent.removeChild(this);
+				if(parent)
+				{
+					parent.removeChild(this);
+				}			
 			}
 			else if( numChildren == 1
 			      && ( getChildAt(0) is IDockableDividedBox || parent is IDockableDividedBox )
 			){
 				var onlyChild:UIComponent = UIComponent(getChildAt(0));
-				autoRemove = false;
+
 				removeChild(onlyChild);
 				
 				DockHelper.replace(this,onlyChild);
@@ -56,7 +56,7 @@ package net.goozo.mx.dockalbe
 				var indexOffset:Number=0;
 				var persentOffset:Number = dChild.height / height;
 				
-				dChild.autoRemove = false;
+
 				while(dChild.numChildren>0)
 				{
 					var subChild:UIComponent = UIComponent(dChild.removeChildAt(0));
@@ -70,7 +70,7 @@ package net.goozo.mx.dockalbe
 				uChild.percentWidth = 100;
 				super.addChildAt(uChild,index);
 			}
-			autoRemove = true;
+
 			return child;
 		}
 		override public function get explicitMinWidth():Number
