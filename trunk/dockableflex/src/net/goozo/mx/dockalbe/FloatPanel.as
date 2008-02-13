@@ -8,7 +8,7 @@ package net.goozo.mx.dockalbe
 	
 	public class FloatPanel extends ClosablePanel
 	{
-		private var resizeButton:Button;
+		private var resizeButton:Button=null;
 		
 		private var _showResizeButton:Boolean=true;;
 		
@@ -79,10 +79,19 @@ package net.goozo.mx.dockalbe
 		{
 			super.layoutChrome(unscaledWidth,unscaledHeight);
 			
+			// The previewer in Flex builder can not get the getStyle properly, so ..
 			if( _showResizeButton && resizeButton )
 			{
-				resizeButton.width = getStyle("resizeButtonWidth");
-				resizeButton.height = getStyle("resizeButtonHeight");			
+				var resizeButtonWidth:Number = getStyle("resizeButtonWidth");
+				var resizeButtonHeight:Number = getStyle("resizeButtonHeight");
+				if( resizeButtonWidth>0 && resizeButtonHeight>0 )
+				{
+					resizeButton.width = getStyle("resizeButtonWidth");
+					resizeButton.height = getStyle("resizeButtonHeight");					
+				}else{
+					resizeButton.width = 7;
+					resizeButton.height = 7;	
+				}			
 				resizeButton.move( unscaledWidth - resizeButton.width , unscaledHeight - resizeButton.height );				
 			}	
 		}

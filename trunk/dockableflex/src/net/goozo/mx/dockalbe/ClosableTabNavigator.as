@@ -54,7 +54,7 @@ package net.goozo.mx.dockalbe
 			var retObj:DisplayObject = super.removeChild(child);
 			if(numChildren == 0)
 			{
-				if(autoRemove)
+				if(autoRemove && parent!=null)
 				{
 					parent.removeChild(this);
 				}else{
@@ -69,8 +69,11 @@ package net.goozo.mx.dockalbe
 			if( selectedChild is IDockableChild
 			 && IDockableChild(selectedChild).tabCloseEnabled
 			 ){
-			 	IDockableChild(selectedChild).closeTab();
-			 	removeChild(selectedChild);
+			 	if(IDockableChild(selectedChild).closeTab())
+			 	{
+			 		removeChild(selectedChild);
+			 	}
+			 	
 			 }
 		}
 	}

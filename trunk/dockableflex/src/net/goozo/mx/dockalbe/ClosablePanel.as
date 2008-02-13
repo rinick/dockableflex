@@ -48,15 +48,21 @@ package net.goozo.mx.dockalbe
 			
 			if( fromChild != null )
 			{
-				if( fromChild is DockableTabNavigator )
+				if( fromChild is ClosableTabNavigator )
 				{
 					addChild(fromChild);
+					if(ClosableTabNavigator(fromChild).selectedChild)
+					{
+						//force it to dispatch a ChildChangeEvent
+						ClosableTabNavigator(fromChild).selectedChild=ClosableTabNavigator(fromChild).selectedChild;
+					}
 				}else{
 					var newTabNav:DockableTabNavigator = new DockableTabNavigator();
 					addChild(newTabNav);
 					if( fromChild.parent!=null && fromChild.parent is DockableTabNavigator )
 					{
 						var oldTabNav:DockableTabNavigator = DockableTabNavigator(fromChild.parent);
+						newTabNav.dockId = oldTabNav.dockId;
 						newTabNav.allowAutoCreatePanel = oldTabNav.allowAutoCreatePanel;
 						newTabNav.allowFloat = oldTabNav.allowFloat;
 						newTabNav.allowMultiTab = oldTabNav.allowMultiTab;

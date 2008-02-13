@@ -5,6 +5,6 @@ package net.goozo.mx.dockalbe
 	public interface IDockableChild extends IContainer
 	{
 		function get tabCloseEnabled():Boolean;
-		function closeTab():void;
+		function closeTab():Boolean;
 	}
 }
