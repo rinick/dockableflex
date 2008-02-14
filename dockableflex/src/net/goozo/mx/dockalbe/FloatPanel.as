@@ -6,7 +6,7 @@ package net.goozo.mx.dockalbe
 	import mx.core.Container;
 	import mx.styles.StyleProxy;
 	
-[IconFile("FloatPanel.png")
+[IconFile("FloatPanel.png")]
 
 	public class FloatPanel extends ClosablePanel
 	{

@@ -220,7 +220,7 @@ package net.goozo.mx.dockalbe
 				return;
 			}
 					
-			if( dockSource.allowMultiTab && finder.findTabBar(newTarget))
+			if( dockSource.allowMultiTab && !dockSource.lockPanel && finder.findTabBar(newTarget) )
 			{
 				if( finder.checkTabBar(dockSource) )
 				{
