@@ -12,6 +12,8 @@ package net.goozo.mx.dockalbe
 		public var allowAutoCreatePanel:Boolean=true;
 		public var tabInFloatPanel:Boolean=false;
 		
+		public var lockPanel:Boolean = false;
+		
 		public var targetTabNav:DockableTabNavigator
 		public var targetChild:Container;
 		public var targetPanel:DockablePanel;

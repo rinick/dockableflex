@@ -1,22 +1,24 @@
 package net.goozo.mx.dockalbe
 {
 	import flash.display.DisplayObject;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	import mx.containers.TabNavigator;
-	import mx.core.Application;
 	import mx.core.Container;
-	import mx.core.ScrollPolicy;
 	import mx.core.UIComponent;
-	import mx.events.CloseEvent;
 	
 [IconFile("DockablePanel.png")]
 
 	public class DockablePanel extends ClosablePanel
 	{		
 				
-		private var dragStarter:DragStarter=null;
+		private var dragStarter:DragStarter = null;
+		
+		public var lockPanel:Boolean =  false;
+
+		override public function get allowFloat():Boolean
+		{
+			return !lockPanel && tabNav.allowFloat;
+		}
 		        		
 		public function DockablePanel( fromChild:Container = null )
 		{
@@ -34,6 +36,15 @@ package net.goozo.mx.dockalbe
 
 			dragStarter.startListen(startDragDockPanel);					
 		}
+		
+		override public function removeChild(child:DisplayObject):DisplayObject
+		{
+			if(lockPanel && child==tabNav)
+			{
+				return child;
+			}
+			return super.removeChild(child);
+		}
 
 		private function startDragDockPanel(e:MouseEvent):void
 		{      
@@ -43,6 +54,9 @@ package net.goozo.mx.dockalbe
             dockSource.allowMultiTab = allowMultiTab;
 			dockSource.allowFloat = allowFloat;
 			dockSource.allowAutoCreatePanel = allowAutoCreatePanel;
+			
+			dockSource.lockPanel = lockPanel;
+			
 			
             DockManager.doDock(this,dockSource,e);			
 		}
