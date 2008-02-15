@@ -12,14 +12,12 @@ package net.goozo.mx.dockalbe
 	{		
 				
 		private var dragStarter:DragStarter = null;
-		
-		public var lockPanel:Boolean =  false;
 
 		override public function get allowFloat():Boolean
 		{
 			return !lockPanel && tabNav.allowFloat;
 		}
-		        		
+
 		public function DockablePanel( fromChild:Container = null )
 		{
 			super( fromChild );
@@ -33,17 +31,7 @@ package net.goozo.mx.dockalbe
 			{
 				dragStarter = new DragStarter(titleBar);
 			}			
-
 			dragStarter.startListen(startDragDockPanel);					
-		}
-		
-		override public function removeChild(child:DisplayObject):DisplayObject
-		{
-			if(lockPanel && child==tabNav)
-			{
-				return child;
-			}
-			return super.removeChild(child);
 		}
 
 		private function startDragDockPanel(e:MouseEvent):void

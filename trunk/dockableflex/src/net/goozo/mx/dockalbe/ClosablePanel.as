@@ -11,6 +11,8 @@ package net.goozo.mx.dockalbe
 
 	public class ClosablePanel extends TitleWindow
 	{
+		public var lockPanel:Boolean =  false;
+		
 		protected var tabNav:DockableTabNavigator=null;
 
 		public function get allowMultiTab():Boolean
@@ -113,6 +115,11 @@ package net.goozo.mx.dockalbe
 
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
+			if(lockPanel && child==tabNav)
+			{
+				return child;
+			}
+			
 			var retObj:DisplayObject = super.removeChild(child);
 			if(numChildren == 0 )
 			{
@@ -120,6 +127,7 @@ package net.goozo.mx.dockalbe
 			}
 			return retObj;
 		}
+
 		override public function get explicitMinWidth():Number
 		{
 			var superExplicitMinWidth:Number = super.explicitMinWidth;
