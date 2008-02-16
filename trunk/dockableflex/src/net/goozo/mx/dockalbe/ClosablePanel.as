@@ -9,6 +9,8 @@ package net.goozo.mx.dockalbe
 	import mx.core.ScrollPolicy;
 	import mx.events.CloseEvent;
 
+[ExcludeClass]
+
 	public class ClosablePanel extends TitleWindow
 	{
 		public var lockPanel:Boolean =  false;
