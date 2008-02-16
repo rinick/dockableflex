@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ClosableBox xmlns="*" xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2">
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			public var text:String ="";
+			[Bindable]
+			public var htmlText:String ="";
+			
+		]]>
+	</mx:Script>
+	<mx:TextArea id="textArea" width="100%" height="100%" htmlText="{htmlText}" text="{text}" editable="true" wordWrap="true"/>
+	
+</ClosableBox>

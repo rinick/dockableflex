@@ -1,6 +1,7 @@
 package net.goozo.mx.dockalbe
 {
 	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
 	
 	import mx.controls.Button;
 	import mx.core.Container;
@@ -119,7 +120,11 @@ package net.goozo.mx.dockalbe
 		
 		private function handleStartDragTitle(e:MouseEvent):void
 		{
-			startDrag();
+			var bounds:Rectangle=new Rectangle(0,0,DockManager.app.width,DockManager.app.height);
+			bounds.x -= width-4;
+			bounds.width += width-8;
+			bounds.height -= 4;
+			startDrag(false,bounds);
 			stage.addEventListener(MouseEvent.MOUSE_UP,handleStopDragTitle);
 		}
 		private function handleStopDragTitle(e:MouseEvent):void
