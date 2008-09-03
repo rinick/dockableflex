@@ -139,9 +139,9 @@ package net.goozo.mx.dockalbe
 			}
 			if(tabNav!=null)
 			{
-				return tabNav.explicitMinWidth + getStyle("paddingLeft")+ getStyle("paddingRight");
+				return tabNav.explicitMinWidth + getStyle("paddingLeft") + getStyle("paddingRight") + getStyle("borderThicknessLeft") + getStyle("borderThicknessRight");
 			}else{
-				return getStyle("paddingLeft")+ getStyle("paddingRight");
+				return getStyle("paddingLeft") + getStyle("paddingRight") + getStyle("borderThicknessLeft") + getStyle("borderThicknessRight");
 			}
 			
 		}
@@ -154,9 +154,9 @@ package net.goozo.mx.dockalbe
 			}
 			if(tabNav!=null)
 			{
-				return tabNav.explicitMinHeight + getStyle("paddingTop")+ getStyle("paddingBottom");
+				return tabNav.explicitMinHeight + getStyle("headerHeight") + getStyle("paddingTop")+ getStyle("paddingBottom") + getStyle("borderThicknessTop") + getStyle("borderThicknessBottom");
 			}else{
-				return getStyle("paddingTop")+ getStyle("paddingBottom");
+				return getStyle("headerHeight") + getStyle("paddingTop")+ getStyle("paddingBottom") + getStyle("borderThicknessTop") + getStyle("borderThicknessBottom");
 			}
 		}
 

@@ -1,42 +1,40 @@
 
 DockablePanel
 {
-	backgroundColor: #FFFFFF;
+	backgroundColor: #E2E2E2;
 	backgroundAlpha:0.4;
 	borderAlpha: 0.4;
 	borderColor: #E2E2E2;
-	borderStyle: "solid";
-	borderThickness: 0;
+	borderThicknessBottom: 8;
 	borderThicknessLeft: 10;
 	borderThicknessRight: 10;
 	borderThicknessTop: 2;
 	cornerRadius: 4;
 	dropShadowEnabled: true;
-	paddingBottom: 4;
-	paddingLeft: 5;
-	paddingRight: 5;
-	paddingTop: 18;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
 	roundedBottomCorners: true;
 	statusStyleName: "windowStatus";
 	titleStyleName: "windowStyles";
 	headerHeight:18;                  
 }
 FloatPanel {
-	backgroundColor: #FFFFFF;
+	backgroundColor: #E2E2E2;
 	backgroundAlpha:0.4;
 	borderAlpha: 0.4;
 	borderColor: #E2E2E2;
-	borderStyle: "solid";
-	borderThickness: 0;
+	borderThicknessBottom: 8;
 	borderThicknessLeft: 10;
 	borderThicknessRight: 10;
 	borderThicknessTop: 2;
 	cornerRadius: 4;
 	dropShadowEnabled: true;
-	paddingBottom: 4;
-	paddingLeft: 5;
-	paddingRight: 5;
-	paddingTop: 18;
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
 	roundedBottomCorners: false;
 	statusStyleName: "windowStatus";
 	titleStyleName: "windowStyles";
@@ -53,7 +51,6 @@ DockableTabNavigator
 {
 	backgroundColor: #FFFFFF;
 	borderColor: #AAB3B3;
-	borderStyle: "solid";
 	horizontalAlign: "left";
 	horizontalGap: -1;
 	paddingTop: 0;

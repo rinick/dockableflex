@@ -5,4 +5,5 @@
     <component id="DockablePanel" class="net.goozo.mx.dockalbe.DockablePanel"/>
     <component id="FloatPanel" class="net.goozo.mx.dockalbe.FloatPanel"/>
     <component id="DockableTabNavigator" class="net.goozo.mx.dockalbe.DockableTabNavigator"/>
+	<component id="IDockableChild" class="net.goozo.mx.dockalbe.IDockableChild"/>
 </componentPackage>
