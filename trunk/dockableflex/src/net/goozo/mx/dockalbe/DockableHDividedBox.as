@@ -7,18 +7,34 @@ package net.goozo.mx.dockalbe
 
 [IconFile("DockableHDividedBox.png")]
 
+	
+	/**
+	 *  DockableHDividedBox and DockableVDividedBox can be used just as
+	 *  regular DividedBox in the MXML file.
+	 *  But do not use them in actionscript file at run time, because they
+	 *  will be created and removed automaticly
+	 *  according to the layout of the DockablePanel instances.
+	 */
 	public class DockableHDividedBox extends HDividedBox implements IDockableDividedBox
 	{				
 		public function DockableHDividedBox()
 		{
 			super();
 		}
-		
+		/**
+		 *  @private
+		 */
 		override protected function createChildren():void
 		{
 			super.createChildren();
 			DockManager.newDockableApp(this);
 		}
+		
+		/**
+		 *  If there is only one child after the removing.
+		 *  The DockableHDividedBox itself will be removed, and its child
+		 *  will be add to its parent. 
+		 */
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
 			var retObj:DisplayObject = super.removeChild(child);
@@ -46,6 +62,9 @@ package net.goozo.mx.dockalbe
 				DockHelper.replace(this,onlyChild);
 			}		
 		}
+		/**
+		 *  @private
+		 */
 		override public function addChildAt(child:DisplayObject, index:int):DisplayObject
 		{
 			var uChild:UIComponent = UIComponent(child);
@@ -71,6 +90,9 @@ package net.goozo.mx.dockalbe
 			}
 			return child;
 		}
+		/**
+		 *  @private
+		 */
 		override public function get explicitMinWidth():Number
 		{
 			var superExplicitMinWidth:Number = super.explicitMinWidth;
@@ -87,6 +109,9 @@ package net.goozo.mx.dockalbe
 			}	
 			return mMinWidth ;
 		}
+		/**
+		 *  @private
+		 */
 		override public function get explicitMinHeight():Number
 		{
 			var superExplicitMinHeight:Number = super.explicitMinHeight;

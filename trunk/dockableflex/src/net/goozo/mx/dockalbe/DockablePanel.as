@@ -8,21 +8,45 @@ package net.goozo.mx.dockalbe
 	
 [IconFile("DockablePanel.png")]
 
+	/**
+	 *  A DockablePanel instance is always in a DockableHDivideedBox or
+	 *  DockableVDivideedBox. It can be dragged and dropped in to another
+	 *  DockableDivideedBox. Or it can be dragged and released at some empty
+	 *  space, then the DockablePanel will be removed and a FloatPanel that
+	 *  cantains all its children will be created.
+	 */
 	public class DockablePanel extends ClosablePanel
 	{		
 				
 		private var dragStarter:DragStarter = null;
-
-		override public function get allowFloat():Boolean
+		
+		/**
+		 *  floatEnabled is true when its childContainer is floatEnabled
+		 *  and <code>lockPanel</code> is set to false.
+		 */
+		override public function get floatEnabled():Boolean
 		{
-			return !lockPanel && tabNav.allowFloat;
+			if( dockContainer != null )
+			{
+				return !lockPanel && dockContainer.floatEnabled;
+			}
+			return false;
 		}
-
+		
+		/**
+		 *  Constructor
+		 *  @param	fromChild If fromChild is not an IDockableContainer instance,
+		 *  a new DockableTabNavigator will be created, and put it as its first
+		 *  tab child.
+		 */
 		public function DockablePanel( fromChild:Container = null )
 		{
 			super( fromChild );
 		}
 		
+		/**
+		 *  @private
+		 */
 		override protected function createChildren():void
 		{
 			super.createChildren();
@@ -35,23 +59,34 @@ package net.goozo.mx.dockalbe
 		}
 
 		private function startDragDockPanel(e:MouseEvent):void
-		{      
-            var dockSource:DockSource = new DockSource(DockManager.DRAGPANNEL, tabNav, tabNav.dockId);
+		{  
+			var targetTabNav:DockableTabNavigator = null;
+			var dockId:String = "";
+			if ( dockContainer is DockableTabNavigator )
+			{
+				targetTabNav = (dockContainer as DockableTabNavigator)
+				dockId = targetTabNav.dockId;
+			}
+            var dockSource:DockSource = new DockSource( DockManager.DRAGPANNEL, targetTabNav, dockId );
             dockSource.targetPanel = this;
             
-            dockSource.allowMultiTab = allowMultiTab;
-			dockSource.allowFloat = allowFloat;
-			dockSource.allowAutoCreatePanel = allowAutoCreatePanel;
+            dockSource.multiTabEnabled = multiTabEnabled;
+			dockSource.floatEnabled = floatEnabled;
+			dockSource.autoCreatePanelEnabled = autoCreatePanelEnabled;
 			
 			dockSource.lockPanel = lockPanel;
 			
 			
             DockManager.doDock(this,dockSource,e);			
 		}
-		public function dockAsk(source:DockSource, target:UIComponent, position:String):Boolean
+
+		/**
+		 *  @private
+		 */
+		internal function dockAsk(source:DockSource, target:UIComponent, position:String):Boolean
 		{
 			if( ( target!=this || source.targetPanel!=this ) 
-			 && ( tabNav.numChildren!=1 || source.targetTabNav!=tabNav )
+			 && ( dockContainer.numChildren!=1 || source.targetTabNav!=dockContainer )
 			){
 				return true;
 			}else{

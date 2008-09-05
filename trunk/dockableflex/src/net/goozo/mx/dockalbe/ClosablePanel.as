@@ -9,115 +9,151 @@ package net.goozo.mx.dockalbe
 	import mx.core.ScrollPolicy;
 	import mx.events.CloseEvent;
 
-[ExcludeClass]
 
+
+	/**
+	 *  The ClosablePanel class is the base class of DockablePanel and FloatPanel.
+	 */
 	public class ClosablePanel extends TitleWindow
 	{
+		/**
+		 *  Set lockPanel to true so that the panel can not
+		 *  be converted to FloatPanel.( If it's a DockablePanel )
+		 *  And if lockPanel is set to true, the panel won't
+		 *  be removed by the system even if all it's children have be removed.
+		 */
 		public var lockPanel:Boolean =  false;
 		
-		protected var tabNav:DockableTabNavigator=null;
+		/**
+		 *  @private
+		 */
+		protected var dockContainer:IDockableContainer=null;
 
-		public function get allowMultiTab():Boolean
+		/**
+		 *  @copy DockableTabNavigator#floatEnabled
+		 */
+		public function get floatEnabled():Boolean
 		{
-			if(tabNav!=null)
+			if(dockContainer!=null)
 			{
-				return tabNav.allowMultiTab;
+				return dockContainer.floatEnabled;
 			}
 			return false;
 		}
-		public function get allowFloat():Boolean
+		/**
+		 *  @copy DockableTabNavigator#multiTabEnabled
+		 */
+		public function get multiTabEnabled():Boolean
 		{
-			if(tabNav!=null)
+			if( dockContainer!=null && dockContainer is DockableTabNavigator )
 			{
-				return tabNav.allowFloat;
+				return (dockContainer as DockableTabNavigator).multiTabEnabled;
 			}
 			return false;
 		}
-		public function get allowAutoCreatePanel():Boolean
+		/**
+		 *  @copy DockableTabNavigator#autoCreatePanelEnabled
+		 */
+		public function get autoCreatePanelEnabled():Boolean
 		{
-			if(tabNav!=null)
+			if( dockContainer!=null && dockContainer is DockableTabNavigator )
 			{
-				return tabNav.allowAutoCreatePanel;
+				return (dockContainer as DockableTabNavigator).autoCreatePanelEnabled;
 			}
 			return false;
 		}
 		
-		
+		/**
+		 *  Constructor
+		 *  @param	fromChild If fromChild is not an IDockableContainer instance,
+		 *  a new DockableTabNavigator will be created, and put it as its first
+		 *  tab child.
+		 */
 		public function ClosablePanel( fromChild:Container = null )
 		{
 			super();
 			horizontalScrollPolicy = ScrollPolicy.OFF;
 			verticalScrollPolicy = ScrollPolicy.OFF;
-			addEventListener(CloseEvent.CLOSE,handleCloseTab);
+			addEventListener(CloseEvent.CLOSE,handleClose);
 			
 			if( fromChild != null )
 			{
-				if( fromChild is ClosableTabNavigator )
+				if( fromChild is IDockableContainer )
 				{
 					addChild(fromChild);
-					if(ClosableTabNavigator(fromChild).selectedChild)
+					if( fromChild is DockableTabNavigator && DockableTabNavigator(fromChild).selectedChild )
 					{
 						//force it to dispatch a ChildChangeEvent
-						ClosableTabNavigator(fromChild).selectedChild=ClosableTabNavigator(fromChild).selectedChild;
+						DockableTabNavigator(fromChild).selectedChild=DockableTabNavigator(fromChild).selectedChild;
 					}
-				}else{
+				}
+				else
+				{
 					var newTabNav:DockableTabNavigator = new DockableTabNavigator();
 					addChild(newTabNav);
 					if( fromChild.parent!=null && fromChild.parent is DockableTabNavigator )
 					{
 						var oldTabNav:DockableTabNavigator = DockableTabNavigator(fromChild.parent);
 						newTabNav.dockId = oldTabNav.dockId;
-						newTabNav.allowAutoCreatePanel = oldTabNav.allowAutoCreatePanel;
-						newTabNav.allowFloat = oldTabNav.allowFloat;
-						newTabNav.allowMultiTab = oldTabNav.allowMultiTab;
+						newTabNav.autoCreatePanelEnabled = oldTabNav.autoCreatePanelEnabled;
+						newTabNav.floatEnabled = oldTabNav.floatEnabled;
+						newTabNav.multiTabEnabled = oldTabNav.multiTabEnabled;
 					}			
 					addChild(fromChild);					
 				}	
 			}
 		}
+		/**
+		 * @private
+		 */
 		override public function addChild(child:DisplayObject):DisplayObject
 		{
 			return addChildAt(child, -1);
 		}
+		/**
+		 * @private
+		 */
 		override public function addChildAt(child:DisplayObject, index:int):DisplayObject
 		{
-			if(tabNav!=null)
+			if( dockContainer != null )
 			{
 				if( index == -1 )
 				{
-					return  tabNav.addChild(child);
+					return  dockContainer.addChild(child);
 				}else{
-					return  tabNav.addChildAt(child,index);
+					return  dockContainer.addChildAt(child,index);
 				}
 				
 			}else{
-				if( child is TabNavigator )
+				if( child is IDockableContainer )
 				{
-					tabNav = DockableTabNavigator(child);
-					super.addChildAt(tabNav,0);		
+					dockContainer = IDockableContainer(child);
+					super.addChildAt( dockContainer as DisplayObject, 0 );		
 				}else{
-					tabNav = new DockableTabNavigator();
-					super.addChildAt(tabNav,0);
-					tabNav.addChildAt(child,0);
+					dockContainer = new DockableTabNavigator();
+					super.addChildAt( dockContainer as DisplayObject, 0 );
+					dockContainer.addChildAt( child, 0 );
 					title = Container(child).label;
 				}
 
-				tabNav.percentWidth = 100;
-				tabNav.percentHeight = 100;
-				tabNav.addEventListener(ChildChangeEvent.CHANGE,handleChangeChild);
+				dockContainer.percentWidth = 100;
+				dockContainer.percentHeight = 100;
+				dockContainer.addEventListener(ChildChangeEvent.CHILD_CHANGE,handleChangeChild);
 
 				return child;
 			}		
 		}
 		private function handleChangeChild(e:ChildChangeEvent):void
 		{
-			title=e.newTitle;
+			title = e.newTitle;
 			showCloseButton = e.useCloseButton;
 		}
-
+		/**
+		 * @private
+		 */
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
-			if(lockPanel && child==tabNav)
+			if( lockPanel && child == dockContainer )
 			{
 				return child;
 			}
@@ -129,7 +165,9 @@ package net.goozo.mx.dockalbe
 			}
 			return retObj;
 		}
-
+		/**
+		 * @private
+		 */
 		override public function get explicitMinWidth():Number
 		{
 			var superExplicitMinWidth:Number = super.explicitMinWidth;
@@ -137,14 +175,17 @@ package net.goozo.mx.dockalbe
 			{
 				return superExplicitMinWidth;
 			}
-			if(tabNav!=null)
+			if(dockContainer!=null)
 			{
-				return tabNav.explicitMinWidth + getStyle("paddingLeft") + getStyle("paddingRight") + getStyle("borderThicknessLeft") + getStyle("borderThicknessRight");
+				return dockContainer.explicitMinWidth + getStyle("paddingLeft") + getStyle("paddingRight") + getStyle("borderThicknessLeft") + getStyle("borderThicknessRight");
 			}else{
 				return getStyle("paddingLeft") + getStyle("paddingRight") + getStyle("borderThicknessLeft") + getStyle("borderThicknessRight");
 			}
 			
 		}
+		/**
+		 * @private
+		 */
 		override public function get explicitMinHeight():Number
 		{
 			var superExplicitMinHeight:Number = super.explicitMinHeight;
@@ -152,17 +193,20 @@ package net.goozo.mx.dockalbe
 			{
 				return superExplicitMinHeight;
 			}
-			if(tabNav!=null)
+			if(dockContainer!=null)
 			{
-				return tabNav.explicitMinHeight + getStyle("headerHeight") + getStyle("paddingTop")+ getStyle("paddingBottom") + getStyle("borderThicknessTop") + getStyle("borderThicknessBottom");
+				return dockContainer.explicitMinHeight + getStyle("headerHeight") + getStyle("paddingTop")+ getStyle("paddingBottom") + getStyle("borderThicknessTop") + getStyle("borderThicknessBottom");
 			}else{
 				return getStyle("headerHeight") + getStyle("paddingTop")+ getStyle("paddingBottom") + getStyle("borderThicknessTop") + getStyle("borderThicknessBottom");
 			}
 		}
 
-		private function handleCloseTab(e:Event):void
+		private function handleClose(e:Event):void
 		{
-			tabNav.closeTab();
+			if ( dockContainer != null )
+			{
+				dockContainer.closeChild();
+			}
 		}
 		
 	}

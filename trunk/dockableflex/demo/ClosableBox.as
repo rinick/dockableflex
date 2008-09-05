@@ -2,15 +2,15 @@ package
 {
 	import mx.containers.VBox;
 	
-	import net.goozo.mx.dockalbe.IDockableChild;
+	import net.goozo.mx.dockalbe.IDockableTabChild;
 
-	public class ClosableBox extends VBox implements IDockableChild
+	public class ClosableBox extends VBox implements IDockableTabChild
 	{
 		public function ClosableBox()
 		{
 			super();
 		}
-		public function get tabCloseEnabled():Boolean
+		public function get closeTabEnabled():Boolean
 		{
 			return true;
 		}

@@ -4,7 +4,9 @@ package net.goozo.mx.dockalbe
 	
 	import mx.core.Container;
 	import mx.core.UIComponent;
-	
+
+[ExcludeClass]
+
 	public class DockManager
 	{
 		public static const LEFT:String = "dockLeft";
