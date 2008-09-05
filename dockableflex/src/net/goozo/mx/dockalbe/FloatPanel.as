@@ -9,6 +9,15 @@ package net.goozo.mx.dockalbe
 	
 [IconFile("FloatPanel.png")]
 
+	/**
+	 *  FloatPanel is a draggable and resizable titled window class.
+	 *  A FloatPanel instance lays above all the DockablePanel.
+	 *  The parent of the FloatPanel is either a Canvas instance or
+	 *  an Application instance.
+	 *  The first DockableDevidedBox placed on the stage will search its
+	 *  parents to find a Canvas instance or an Application instance. And all
+	 *  the FloatPanel created later instances will use it as its parent.
+	 */
 	public class FloatPanel extends ClosablePanel
 	{
 		private var resizeButton:Button=null;
@@ -25,12 +34,18 @@ package net.goozo.mx.dockalbe
 			"repeatDelay" : "repeatDelay",
 			"repeatInterval" : "repeatInterval"
 	    };
-	    
+		
+	    /**
+		 *  @private
+		 */
 		protected function get resizeButtonStyleFilters():Object
 		{
 			return _resizeButtonStyleFilters;
 		}
 	
+		/**
+		 *  Show or hide the resize button
+		 */
 		public function get showResizeButton():Boolean
 		{
 			return _showResizeButton;
@@ -41,7 +56,11 @@ package net.goozo.mx.dockalbe
 			resizeButton.visible = value;			
 		}
 		
-    	[Inspectable(category="General", enumeration="true,false", defaultValue="true")]
+		
+    	[Inspectable(category = "General", enumeration = "true,false", defaultValue = "true")]
+		/**
+		 *  @private
+		 */
 	    override public function set enabled(value:Boolean):void
 	    {
 	        super.enabled = value;
@@ -50,11 +69,20 @@ package net.goozo.mx.dockalbe
 	        	resizeButton.enabled = value;
 	    }
 	    
+		/**
+		 *  Constructor
+		 *  @param	fromChild If fromChild is not an IDockableContainer instance,
+		 *  a new DockableTabNavigator will be created, and put it as its first
+		 *  tab child.
+		 */
 		public function FloatPanel( fromChild:Container = null )
 		{
 			super( fromChild );
 		}
 		
+		/**
+		 *  @private
+		 */
 		override protected function createChildren():void
 		{
 			super.createChildren();
@@ -78,6 +106,9 @@ package net.goozo.mx.dockalbe
 				callLater(fixFloatSize);
 	        }									
 		}
+		/**
+		 *  @private
+		 */
 		override protected function layoutChrome(unscaledWidth:Number, unscaledHeight:Number):void
 		{
 			super.layoutChrome(unscaledWidth,unscaledHeight);

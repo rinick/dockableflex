@@ -220,7 +220,7 @@ package net.goozo.mx.dockalbe
 				return;
 			}
 					
-			if( dockSource.allowMultiTab && !dockSource.lockPanel && finder.findTabBar(newTarget) )
+			if( dockSource.multiTabEnabled && !dockSource.lockPanel && finder.findTabBar(newTarget) )
 			{
 				if( finder.checkTabBar(dockSource) )
 				{
@@ -230,7 +230,7 @@ package net.goozo.mx.dockalbe
 				}
 				return;
 			}
-			if( ( dockSource.dockType==DockManager.DRAGPANNEL || dockSource.allowAutoCreatePanel )
+			if( ( dockSource.dockType==DockManager.DRAGPANNEL || dockSource.autoCreatePanelEnabled )
 			 && finder.findPanel(newTarget)
 			){
 				if( finder.checkPanel(dockSource) )
@@ -333,9 +333,9 @@ package net.goozo.mx.dockalbe
 	    }
 		private function handleHitNothing():void
 		{
-			if( !dockSource.allowFloat 
+			if( !dockSource.floatEnabled 
 			 || dockSource.tabInFloatPanel
-			 || ( dockSource.dockType==DockManager.DRAGTAB && !dockSource.allowAutoCreatePanel )
+			 || ( dockSource.dockType==DockManager.DRAGTAB && !dockSource.autoCreatePanelEnabled )
 			){
 				updateState(DISABLE);
 			}else{

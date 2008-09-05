@@ -29,7 +29,7 @@
 			}
 		]]>
 	</mx:Script>
-	
+
     <mx:XMLList id="menuData">
         <node label="Notes">
         	<node label="New Note" />

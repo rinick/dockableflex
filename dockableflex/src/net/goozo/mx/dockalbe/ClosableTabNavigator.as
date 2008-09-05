@@ -6,46 +6,60 @@ package net.goozo.mx.dockalbe
 	import mx.core.Container;
 	import mx.styles.StyleProxy;
 
-[ExcludeClass]
 
-	internal class ClosableTabNavigator extends TabNavigator
+	/**
+	 *  ClosableTabNavigator is the base class of DockableTabNavigator
+	 */
+	public class ClosableTabNavigator extends TabNavigator
 	{
-		
+		/**
+		 *  If autoRemove is true, it will be removed when
+		 *  all of its children have been removed.
+		 */
 		public var autoRemove:Boolean = true;
 		
+		/**
+		 *  Constructor
+		 */
 		public function ClosableTabNavigator()
 		{
 			super();
 		}
-
+		/**
+		 *  @private
+		 */
 	    override public function set selectedIndex(value:int):void
 	    {
 	    	super.selectedIndex = value;
 	    	
-	    	var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHANGE);	
+	    	var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE);	
 	    	if(value>=0)
 	    	{
 		    	var newChild:Container = Container(getChildAt(value)); 	    	    	
 		    	childChangeEvent.newTitle = newChild.label;
-		    	if(newChild is IDockableChild)
+		    	if(newChild is IDockableTabChild)
 		    	{
-		    		childChangeEvent.useCloseButton = IDockableChild(newChild).tabCloseEnabled;
+		    		childChangeEvent.useCloseButton = IDockableTabChild(newChild).closeTabEnabled;
 		    	}					    		
 	    	}
 	    	dispatchEvent(childChangeEvent);
 	    }
+		/**
+		 *  If autoRemove is true, the ClosableTabNavigator itself will
+		 *  be removed after its last child has been removed.
+		 */
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
 			if(child==selectedChild)
 			{
 				if( selectedIndex != numChildren-1 )
 				{
-					var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHANGE);
+					var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE);
 					var newChild:Container = Container(getChildAt(selectedIndex+1));
 					childChangeEvent.newTitle = newChild.label;
-					if(newChild is IDockableChild)
+					if(newChild is IDockableTabChild)
 		    		{
-		    			childChangeEvent.useCloseButton = IDockableChild(newChild).tabCloseEnabled;
+		    			childChangeEvent.useCloseButton = IDockableTabChild(newChild).closeTabEnabled;
 		    		}
 		    		dispatchEvent(childChangeEvent);
 				}		
@@ -58,18 +72,22 @@ package net.goozo.mx.dockalbe
 				{
 					parent.removeChild(this);
 				}else{
-					dispatchEvent(new ChildChangeEvent(ChildChangeEvent.CHANGE));
+					dispatchEvent(new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE));
 				}
 				
 			}
 			return retObj;
 		}
-		public function closeTab():void
+		/**
+		 *  Try closing the selected tab child.
+		 *  @see IDockableTabChild#closeTab
+		 */
+		public function closeChild():void
 		{
-			if( selectedChild is IDockableChild
-			 && IDockableChild(selectedChild).tabCloseEnabled
+			if( selectedChild is IDockableTabChild
+			 && IDockableTabChild(selectedChild).closeTabEnabled
 			 ){
-			 	if(IDockableChild(selectedChild).closeTab())
+			 	if(IDockableTabChild(selectedChild).closeTab())
 			 	{
 			 		removeChild(selectedChild);
 			 	}
