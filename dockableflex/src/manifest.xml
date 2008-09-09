@@ -6,4 +6,6 @@
     <component id="FloatPanel" class="net.goozo.mx.dockalbe.FloatPanel"/>
     <component id="DockableTabNavigator" class="net.goozo.mx.dockalbe.DockableTabNavigator"/>
 	<component id="IDockableTabChild" class="net.goozo.mx.dockalbe.IDockableTabChild"/>
+	<component id="ClosableVBox" class="net.goozo.mx.dockalbe.ClosableVBox"/>
+	<component id="ClosableHBox" class="net.goozo.mx.dockalbe.ClosableHBox"/>
 </componentPackage>
