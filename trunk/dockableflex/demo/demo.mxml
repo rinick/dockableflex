@@ -49,12 +49,12 @@
 			<ns1:DockableVDividedBox width="60%">
 				<ns1:DockablePanel height="80%" lockPanel="true">
 					<ns1:DockableTabNavigator id="mainNav">
-						<ns2:ClosableBox label="note 1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2">
+						<ns1:ClosableVBox label="note 1" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2">
 							<mx:TextArea width="100%" height="100%">
 								<mx:htmlText>
 									<![CDATA[
 <P ALIGN='CENTER'><FONT SIZE="20">Welcome</FONT></P>
-dockableFlex provides dockable panel components for Adobe Flex 3.
+dockableFlex is a dockable panel components library for Adobe Flex 3.
 
 You can find the latest version here:
 <FONT COLOR='#0066CC'><A HREF='http://www.goozo.net/dockableflex.php' TARGET='_blank'><B>http://www.goozo.net/dockableflex.php</B></A></FONT>
@@ -66,7 +66,7 @@ If you have any question. Please post it in this Google Group:
 									]]>
 								</mx:htmlText>
 							</mx:TextArea>
-						</ns2:ClosableBox>
+						</ns1:ClosableVBox>
 						<ns2:ClosableTextBox label="note 2" text="&#xa;Children in the main panel can be closed.&#xa;But they can not be floated.&#xa;While all the other panel are floatable but not closable."/>
 					</ns1:DockableTabNavigator>
 				</ns1:DockablePanel>

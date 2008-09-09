@@ -1,12 +1,10 @@
-package
+package net.goozo.mx.dockalbe
 {
 	import mx.containers.VBox;
 	
-	import net.goozo.mx.dockalbe.IDockableTabChild;
-
-	public class ClosableBox extends VBox implements IDockableTabChild
+	public class ClosableVBox extends VBox implements IDockableTabChild
 	{
-		public function ClosableBox()
+		public function ClosableVBox()
 		{
 			super();
 		}
