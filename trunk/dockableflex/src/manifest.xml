@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <componentPackage>
-    <component id="DockableHDividedBox" class="net.goozo.mx.dockalbe.DockableHDividedBox"/>
-    <component id="DockableVDividedBox" class="net.goozo.mx.dockalbe.DockableVDividedBox"/>
-    <component id="DockablePanel" class="net.goozo.mx.dockalbe.DockablePanel"/>
-    <component id="FloatPanel" class="net.goozo.mx.dockalbe.FloatPanel"/>
-    <component id="DockableTabNavigator" class="net.goozo.mx.dockalbe.DockableTabNavigator"/>
-	<component id="IDockableTabChild" class="net.goozo.mx.dockalbe.IDockableTabChild"/>
-	<component id="ClosableVBox" class="net.goozo.mx.dockalbe.ClosableVBox"/>
-	<component id="ClosableHBox" class="net.goozo.mx.dockalbe.ClosableHBox"/>
+    <component id="DockableHDividedBox" class="net.goozo.mx.dockable.DockableHDividedBox"/>
+    <component id="DockableVDividedBox" class="net.goozo.mx.dockable.DockableVDividedBox"/>
+    <component id="DockablePanel" class="net.goozo.mx.dockable.DockablePanel"/>
+    <component id="FloatPanel" class="net.goozo.mx.dockable.FloatPanel"/>
+    <component id="DockableTabNavigator" class="net.goozo.mx.dockable.DockableTabNavigator"/>
+	<component id="IDockableTabChild" class="net.goozo.mx.dockable.IDockableTabChild"/>
+	<component id="ClosableVBox" class="net.goozo.mx.dockable.ClosableVBox"/>
+	<component id="ClosableHBox" class="net.goozo.mx.dockable.ClosableHBox"/>
 </componentPackage>
