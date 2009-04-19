@@ -25,11 +25,11 @@ package net.goozo.mx.dockalbe
 		
 		/**
 		 *  Constructor
-		 *  @param type The event type; indicates the action that caused the event.
+		 *  @param type The event type;indicates the action that caused the event.
 		 *  @param bubbles Specifies whether the event can bubble up the display list hierarchy.
 		 *  @param cancelable Specifies whether the behavior associated with the event can be prevented.
 		 */
-		public function ChildChangeEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
+		public function ChildChangeEvent(type:String, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 		}

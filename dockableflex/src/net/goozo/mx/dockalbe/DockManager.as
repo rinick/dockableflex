@@ -9,6 +9,11 @@ package net.goozo.mx.dockalbe
 
 	public class DockManager
 	{
+		public static const CLOSABLEPANEL:int = 0;
+		public static const DOCKABLEPANEL:int = 1;
+		public static const FLOATPANEL:int = 2;
+
+		
 		public static const LEFT:String = "dockLeft";
 		public static const RIGHT:String = "dockRight";
 		public static const TOP:String = "dockTop";
@@ -21,39 +26,33 @@ package net.goozo.mx.dockalbe
 		public static const DRAGTAB:String = "dragTab";
 		public static const DRAGPANNEL:String = "dragPannel";
 	
-		private static var _impl:DockManagerImpl=null;
+		private static var _impl:DockManagerImpl = null;
 		private static function get impl():DockManagerImpl
 		{
-			if(_impl==null)
+			if (_impl == null)
 			{
-				_impl=new DockManagerImpl();
+				_impl = new DockManagerImpl();
 			}
 			return _impl;
 		}
+
+		public static function get isDocking():Boolean
+		{
+			return impl.isDocking;
+		}
 		
-		public static function hasApp():Boolean
+		public static function get explicitDockCanvas():Container
 		{
-			return impl.hasApp();
+			return impl.explicitDockCanvas;
 		}
-		public static function get app():Container
+		public static function set explicitDockCanvas(value:Container):void
 		{
-			return impl.app;
-		}
-		public static function set app(value:Container):void
-		{
-			impl.app=value;
+			impl.explicitDockCanvas = value;
 		}
 						
-		public static function doDock( dragInitiator:UIComponent, dockSource:DockSource, e:MouseEvent ):Boolean
+		public static function doDock(dragInitiator:UIComponent, dockSource:DockSource, e:MouseEvent):Boolean
 		{
-			return impl.doDock(dragInitiator,dockSource,e);
+			return impl.doDock(dragInitiator, dockSource, e);
 		}
-		
-		public static function newDockableApp(dividedBox:IDockableDividedBox):void
-		{
-			impl.newDockableApp(UIComponent(dividedBox));
-		}
-
-
 	}
 }

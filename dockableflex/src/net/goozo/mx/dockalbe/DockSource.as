@@ -9,10 +9,10 @@ package net.goozo.mx.dockalbe
 		public var dockType:String;
 		public var dockId:String;
 		
-		public var multiTabEnabled:Boolean=true;
-		public var floatEnabled:Boolean=true;
-		public var autoCreatePanelEnabled:Boolean=true;
-		public var tabInFloatPanel:Boolean=false;
+		public var multiTabEnabled:Boolean = true;
+		public var floatEnabled:Boolean = true;
+		public var autoCreatePanelEnabled:Boolean = true;
+		public var panelType:int = DockManager.DOCKABLEPANEL;
 		
 		public var lockPanel:Boolean = false;
 		
@@ -23,7 +23,7 @@ package net.goozo.mx.dockalbe
 		
 
 		
-		public function DockSource(dockType:String,targetTabNav:DockableTabNavigator,dockId:String="")
+		public function DockSource(dockType:String, targetTabNav:DockableTabNavigator, dockId:String = "")
 		{
 			this.dockType = dockType;
 			this.targetTabNav = targetTabNav;

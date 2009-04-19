@@ -32,32 +32,33 @@ package net.goozo.mx.dockalbe
 	    {
 	    	super.selectedIndex = value;
 	    	
-	    	var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE);	
-	    	if(value>=0)
+	    	var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE);
+	    	if (value >= 0)
 	    	{
-		    	var newChild:Container = Container(getChildAt(value)); 	    	    	
+		    	var newChild:Container = Container(getChildAt(value));	    	    	
 		    	childChangeEvent.newTitle = newChild.label;
-		    	if(newChild is IDockableTabChild)
+		    	if (newChild is IDockableTabChild)
 		    	{
 		    		childChangeEvent.useCloseButton = IDockableTabChild(newChild).closeTabEnabled;
 		    	}					    		
 	    	}
 	    	dispatchEvent(childChangeEvent);
 	    }
+
 		/**
 		 *  If autoRemove is true, the ClosableTabNavigator itself will
 		 *  be removed after its last child has been removed.
 		 */
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
-			if(child==selectedChild)
+			if (child == selectedChild)
 			{
-				if( selectedIndex != numChildren-1 )
+				if (selectedIndex != numChildren-1)
 				{
 					var childChangeEvent:ChildChangeEvent = new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE);
 					var newChild:Container = Container(getChildAt(selectedIndex+1));
 					childChangeEvent.newTitle = newChild.label;
-					if(newChild is IDockableTabChild)
+					if (newChild is IDockableTabChild)
 		    		{
 		    			childChangeEvent.useCloseButton = IDockableTabChild(newChild).closeTabEnabled;
 		    		}
@@ -66,32 +67,33 @@ package net.goozo.mx.dockalbe
 			}
 			
 			var retObj:DisplayObject = super.removeChild(child);
-			if(numChildren == 0)
+			if (numChildren == 0)
 			{
-				if(autoRemove && parent!=null)
+				if (autoRemove && parent!= null)
 				{
 					parent.removeChild(this);
-				}else{
+				}
+				else
+				{
 					dispatchEvent(new ChildChangeEvent(ChildChangeEvent.CHILD_CHANGE));
 				}
-				
 			}
 			return retObj;
 		}
+
 		/**
 		 *  Try closing the selected tab child.
 		 *  @see IDockableTabChild#closeTab
 		 */
 		public function closeChild():void
 		{
-			if( selectedChild is IDockableTabChild
+			if (selectedChild is IDockableTabChild
 			 && IDockableTabChild(selectedChild).closeTabEnabled
-			 ){
-			 	if(IDockableTabChild(selectedChild).closeTab())
+			){
+			 	if (IDockableTabChild(selectedChild).closeTab())
 			 	{
 			 		removeChild(selectedChild);
 			 	}
-			 	
 			 }
 		}
 	}
