@@ -1,10 +1,14 @@
 package net.goozo.mx.dockalbe
 {
-	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
+	import flash.geom.Rectangle;
+	import mx.effects.AnimateProperty;
+	import mx.effects.Move;
+	import mx.effects.Resize;
 	
 	import mx.core.Container;
 	import mx.core.UIComponent;
+	import mx.effects.easing.Quartic;
 	
 [IconFile("DockablePanel.png")]
 
@@ -17,7 +21,11 @@ package net.goozo.mx.dockalbe
 	 */
 	public class DockablePanel extends ClosablePanel
 	{		
-				
+		override public function get panelType():int
+		{
+			return DockManager.DOCKABLEPANEL;
+		}
+		
 		private var dragStarter:DragStarter = null;
 		
 		/**
@@ -26,7 +34,7 @@ package net.goozo.mx.dockalbe
 		 */
 		override public function get floatEnabled():Boolean
 		{
-			if( dockContainer != null )
+			if (dockContainer != null)
 			{
 				return !lockPanel && dockContainer.floatEnabled;
 			}
@@ -35,39 +43,39 @@ package net.goozo.mx.dockalbe
 		
 		/**
 		 *  Constructor
-		 *  @param	fromChild If fromChild is not an IDockableContainer instance,
+		 *  @param	fromChild If fromChild is not an IDockableContainer instance, 
 		 *  a new DockableTabNavigator will be created, and put it as its first
 		 *  tab child.
 		 */
-		public function DockablePanel( fromChild:Container = null )
+		public function DockablePanel(fromChild:Container = null)
 		{
-			super( fromChild );
+			super(fromChild);
 		}
 		
 		/**
 		 *  @private
 		 */
-		override protected function createChildren():void
+		override protected function childrenCreated():void 
 		{
-			super.createChildren();
-			
-			if(dragStarter==null)
+			super.childrenCreated();
+
+			if (dragStarter == null)
 			{
 				dragStarter = new DragStarter(titleBar);
 			}			
-			dragStarter.startListen(startDragDockPanel);					
+			dragStarter.startListen(startDragDockPanel);
 		}
 
 		private function startDragDockPanel(e:MouseEvent):void
 		{  
 			var targetTabNav:DockableTabNavigator = null;
 			var dockId:String = "";
-			if ( dockContainer is DockableTabNavigator )
+			if (dockContainer is DockableTabNavigator)
 			{
 				targetTabNav = (dockContainer as DockableTabNavigator)
 				dockId = targetTabNav.dockId;
 			}
-            var dockSource:DockSource = new DockSource( DockManager.DRAGPANNEL, targetTabNav, dockId );
+            var dockSource:DockSource = new DockSource(DockManager.DRAGPANNEL, targetTabNav, dockId);
             dockSource.targetPanel = this;
             
             dockSource.multiTabEnabled = multiTabEnabled;
@@ -76,8 +84,7 @@ package net.goozo.mx.dockalbe
 			
 			dockSource.lockPanel = lockPanel;
 			
-			
-            DockManager.doDock(this,dockSource,e);			
+            DockManager.doDock(this, dockSource, e);
 		}
 
 		/**
@@ -85,11 +92,13 @@ package net.goozo.mx.dockalbe
 		 */
 		internal function dockAsk(source:DockSource, target:UIComponent, position:String):Boolean
 		{
-			if( ( target!=this || source.targetPanel!=this ) 
-			 && ( dockContainer.numChildren!=1 || source.targetTabNav!=dockContainer )
+			if ((target!= this || source.targetPanel!= this) 
+			 && (dockContainer.numChildren!= 1 || source.targetTabNav!= dockContainer)
 			){
 				return true;
-			}else{
+			}
+			else
+			{
 				return false;
 			}
 		}

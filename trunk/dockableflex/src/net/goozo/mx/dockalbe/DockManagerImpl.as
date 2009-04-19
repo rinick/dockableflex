@@ -10,25 +10,21 @@ package net.goozo.mx.dockalbe
 	import mx.core.Application;
 	import mx.core.Container;
 	import mx.core.IFlexDisplayObject;
-	import mx.core.ScrollPolicy;
 	import mx.core.UIComponent;
 	import mx.managers.CursorManager;
 	import mx.managers.DragManager;
 	import mx.styles.CSSStyleDeclaration;
 	import mx.styles.StyleManager;
-		
+
 
 	internal class DockManagerImpl
 	{
-		private static const TAB:String = "dockTAB";
-		private static const PANEL:String = "dockPANEL";
+		private static const TAB:String = "dockTab";
+		private static const PANEL:String = "dockPanel";
 		private static const FLOAT:String = "dockFloat";
 		private static const DISABLE:String = "dockDisable";
 		
 		private var state:String = DISABLE;
-		
-		private var _app:Container = null;
-		private var PendApp:Container = null;
 		
 		private var stage:Stage;
 		
@@ -39,76 +35,63 @@ package net.goozo.mx.dockalbe
 		private var cursorClass:Class = null;
 		private var cursorID:int = CursorManager.NO_CURSOR;
 			
-		private var bDoingDock:Boolean=false;
-				
+		private var _isDocking:Boolean = false;
+		public function get isDocking():Boolean
+		{
+			return _isDocking;
+		}
+		
 		private var hintFocus:DisplayObject = null;
 		private var dockSource:DockSource;
 		
-		private var finder:DockFinder;
+		private var finder:DockHelper;
 		
 		public function DockManagerImpl()
 		{
 			super();
-			finder = new DockFinder();
+			finder = new DockHelper();
 		}
-					
-		public function hasApp():Boolean
+		
+		private var _explicitDockCanvas:Container;
+		public function get explicitDockCanvas():Container
 		{
-			return (_app==null);
+			return _explicitDockCanvas;
 		}
-		public function get app():Container
+		public function set explicitDockCanvas(value:Container):void
 		{
-			if(_app!=null)
+			if (value is Canvas || value is Application)
 			{
-				return _app;
-			}else{
-				return Container(Application.application);
+				_explicitDockCanvas = value;
+			}
+			else
+			{
+				_explicitDockCanvas = null;
 			}
 		}
-		public function set app(value:Container):void
+		public function get dockCanvas():Container
 		{
-			if(bDoingDock)
+			if (explicitDockCanvas)
 			{
-				PendApp = value;
-			}else{
-				_app = value;
-			}			
-		}	
-		public function newDockableApp(dividedBox:UIComponent):void
-		{
-
-			if(_app!=null)
-			{
-				return;
+				return explicitDockCanvas;
 			}
-			var getTar:DisplayObject=dividedBox;
-			
-			while(getTar != null)
+			if (finder && finder.targetCanvas)
 			{
-				if(getTar is Canvas || getTar is Application)
-				{
-					_app = Container(getTar);
-					_app.horizontalScrollPolicy = ScrollPolicy.OFF;
-					_app.verticalScrollPolicy = ScrollPolicy.OFF;
-					return;
-				}
-				getTar=getTar.parent;
+				return finder.targetCanvas;
 			}
-			return;
+			return Application.application as Container;
 		}				
 	
-
 		private function createDockHint():IFlexDisplayObject
 		{
-			var dockHintClass:Class=null;
-			var inColor:uint=0xFFFF00;
-			var outColor:uint=0xFF0000;
-			var hintRadius:Number=5;
-			var hintAlpha:Number=-1;
+			var dockHintClass:Class = null;
+			var inColor:uint = 0xFFFF00;
+			var outColor:uint = 0xFF0000;
+			var hintRadius:Number = 5;
+			var hintAlpha:Number = 0.5;
 			
 			var dockHintStyle:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DockHint");
 			
-			if(dockHintStyle!=null)
+			if (dockHintStyle!= null)
 			{
 				dockHintClass = dockHintStyle.getStyle("hintSkin");
 				inColor = dockHintStyle.getStyle("hintColorIn");
@@ -117,43 +100,47 @@ package net.goozo.mx.dockalbe
 				hintRadius = dockHintStyle.getStyle("hintRadius");
 			}
 			
-			if(dockHintClass == DockHint)
+			if (dockHintClass == DockHint)
 			{
-				dockHint = new DockHint(inColor,outColor,hintRadius);
-			}else if(dockHintClass != null){
+				dockHint = new DockHint(inColor, outColor, hintRadius);
+			}
+			else if (dockHintClass != null)
+			{
 				dockHint = new dockHintClass();
-			}else{
+			}
+			else
+			{
 				dockHint = new DockHint();
 			}
 			
-			if(hintAlpha>=0)
+			if (hintAlpha >= 0)
 			{
 				dockHint.alpha = hintAlpha;
 			}
-			dragInitiator.systemManager.popUpChildren.addChild(DisplayObject(dockHint));	
+			dragInitiator.systemManager.popUpChildren.addChild(DisplayObject(dockHint));
 			return dockHint;
 		}
 		protected function removeDockHint():void
 		{
-			if(dockHint)
+			if (dockHint)
 			{
 				dockHint.parent.removeChild(DisplayObject(dockHint));
-				dockHint=null;				
+				dockHint = null;
 			}
 		}
-		private function createDragProxyImage(source:UIComponent, e:MouseEvent ):DragProxyImage
+		private function createDragProxyImage(source:UIComponent, e:MouseEvent):DragProxyImage
 		{
-			dragImage = new DragProxyImage();			
+			dragImage = new DragProxyImage();
 			dragInitiator.systemManager.popUpChildren.addChild(dragImage);
-			dragImage.dragSource(source,e);
+			dragImage.dragSource(source, e);
 			return dragImage;
 		}
 		private function removeDragProxyImage():void
 		{
-			if(dragImage)
+			if (dragImage)
 			{
 				dragImage.parent.removeChild(dragImage);
-				dragImage=null;					
+				dragImage = null;
 			}		
 		}
 
@@ -161,9 +148,9 @@ package net.goozo.mx.dockalbe
 		{
 			return dockSource.dockType;
 		}
-		public function doDock( dragInitiator:UIComponent, dockSource:DockSource, e:MouseEvent ):Boolean
+		public function doDock(dragInitiator:UIComponent, dockSource:DockSource, e:MouseEvent):Boolean
 		{
-			if( bDoingDock || DragManager.isDragging)
+			if (_isDocking || DragManager.isDragging)
 			{
 				return false;
 			}
@@ -171,23 +158,23 @@ package net.goozo.mx.dockalbe
 			stage = dragInitiator.stage;
 			this.dockSource = dockSource;
 			createDockHint();
-			createDragProxyImage(dragInitiator,e);
+			createDragProxyImage(dragInitiator, e);
 			
 			
-			stage.addEventListener(MouseEvent.MOUSE_UP,handleDockComplete);
-			stage.addEventListener(MouseEvent.MOUSE_MOVE,handleDockMove);
+			stage.addEventListener(MouseEvent.MOUSE_UP, handleDockComplete);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, handleDockMove);
 			
-			bDoingDock = true;
+			_isDocking = true;
 			return true;
 		}	
 
 		private function endDock():void
 		{
-			stage.removeEventListener(MouseEvent.MOUSE_UP,handleDockComplete);
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE,handleDockMove);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, handleDockComplete);
+			stage.removeEventListener(MouseEvent.MOUSE_MOVE, handleDockMove);
 			
 			dockSource = null;
-			bDoingDock = false;
+			_isDocking = false;
 			removeDockHint();
 			removeDragProxyImage();
 			finder.clear();
@@ -195,55 +182,63 @@ package net.goozo.mx.dockalbe
 			CursorManager.removeCursor(cursorID);
         	cursorID = CursorManager.NO_CURSOR;
         
-			if(PendApp!=null)
-			{
-				_app=PendApp;
-				PendApp=null;
-			}
+//			if (PendApp!= null)
+//			{
+//				_app = PendApp;
+//				PendApp = null;
+//			}
 		}
 
 		private function handleDockMove(e:MouseEvent):void
 		{			
-			var appMousePt:Point = new Point(app.mouseX, app.mouseY);
-			var appRect:Rectangle = app.getBounds(app);
-			
-			if(!appRect.containsPoint(appMousePt))
+			if (explicitDockCanvas)
 			{
-				updateState(DISABLE);
-				return;
+				var appMousePt:Point = new Point(explicitDockCanvas.mouseX, explicitDockCanvas.mouseY);
+				var appRect:Rectangle = explicitDockCanvas.getBounds(explicitDockCanvas);
+				
+				if (!appRect.containsPoint(appMousePt))
+				{
+					updateState(DISABLE);
+					return;
+				}				
 			}
 
-			var newTarget:DisplayObject = findObjectsUnderPoint();	
-			if(newTarget==null)
+			var newTarget:DisplayObject = findObjectsUnderPoint();
+			if (newTarget == null)
 			{
 				handleHitNothing();
 				return;
 			}
 					
-			if( dockSource.multiTabEnabled && !dockSource.lockPanel && finder.findTabBar(newTarget) )
+			if (dockSource.multiTabEnabled && !dockSource.lockPanel && finder.findTabBar(newTarget))
 			{
-				if( finder.checkTabBar(dockSource) )
+				if (finder.checkTabBar(dockSource))
 				{
 					updateState(TAB);
-				}else{
+				}
+				else
+				{
 					updateState(DISABLE);
 				}
 				return;
 			}
-			if( ( dockSource.dockType==DockManager.DRAGPANNEL || dockSource.autoCreatePanelEnabled )
-			 && finder.findPanel(newTarget)
-			){
-				if( finder.checkPanel(dockSource) )
+			if (finder.findPanel(newTarget))
+			{
+				if ((dockSource.dockType == DockManager.DRAGPANNEL || dockSource.autoCreatePanelEnabled))
 				{
-					updateState(PANEL);
-					return;
+					if (finder.checkPanel(dockSource))
+					{
+						updateState(PANEL);
+						return;
+					}
 				}
 			}
 			handleHitNothing();
 		}
 		private function findObjectsUnderPoint():DisplayObject
 		{
-			var targetList:Array = app.getObjectsUnderPoint(new Point(app.stage.mouseX,app.stage.mouseY));
+			var flexApp:Container = Application.application as Container;
+			var targetList:Array = flexApp.getObjectsUnderPoint(new Point(flexApp.stage.mouseX, flexApp.stage.mouseY));
 			
 			var newTarget:DisplayObject;
 		
@@ -251,7 +246,7 @@ package net.goozo.mx.dockalbe
 			while (targetIndex >= 0)
 			{
 				newTarget = targetList[targetIndex];
-				if( newTarget != dockHint 
+				if (newTarget != dockHint 
 				 //&& !dockHint.contains(newTarget)
 				 && newTarget != dragImage 
 				 && !dragImage.contains(newTarget)
@@ -260,59 +255,64 @@ package net.goozo.mx.dockalbe
 				}
 				targetIndex--;
 			}
-			return null;		
+			return null;
 		}
 
 		private function updateState(state:String):void
 		{
-			if(this.state != state)
+			if (this.state != state)
 			{
 				updateCursor(state);
 			}
 			this.state = state;
-			if( state==TAB || state==PANEL )
+			if (state == TAB || state == PANEL)
 			{
-				setHintposition(finder.lastAccepter,finder.lastPosition);
-				dockHint.visible=true;
-			}else{
+				setHintposition(finder.lastAccepter, finder.lastPosition);
+				dockHint.visible = true;
+			}
+			else
+			{
 				dockHint.visible = false;
 			}
-			if(state==FLOAT)
+			if (state == FLOAT)
 			{
 				dragImage.alpha = 1;
-			}else{
+			}
+			else
+			{
 				dragImage.alpha = 0.5;
 			}			
 		}
-		private function setHintposition(dragAaccepter:UIComponent,position:String):void
+
+		private function setHintposition(dragAaccepter:DisplayObject, position:String):void
 		{
-			var fullArea:Rectangle=dragAaccepter.getRect(dockHint.parent);
-			switch(position)
+			var fullArea:Rectangle = DockHelper.getRect(dragAaccepter, dockHint.parent);//dragAaccepter.getRect(dockHint.parent);
+			switch (position)
 			{
 				case DockManager.LEFT:
-					fullArea.width/=4;
+					fullArea.width /= 4;
 					break;
 				case DockManager.TOP:
-					fullArea.height/=4;
+					fullArea.height /= 4;
 					break;
 				case DockManager.RIGHT:
-					fullArea.x += 3*fullArea.width/4
-					fullArea.width/=4;
+					fullArea.x += 3 * fullArea.width / 4;
+					fullArea.width/= 4;
 					break;
 				case DockManager.BOTTOM:
-					fullArea.y += 3*fullArea.height/4
-					fullArea.height/=4;
+					fullArea.y += 3 * fullArea.height / 4;
+					fullArea.height /= 4;
 					break;
 			}
 			dockHint.width = fullArea.width;
 			dockHint.height = fullArea.height;
-			dockHint.move(fullArea.x,fullArea.y);			
+			dockHint.move(fullArea.x, fullArea.y);
 		}
+		
 	   	public function updateCursor(state:String):void
 	    {
 	        var newCursorClass:Class;
-			var styleSheet:CSSStyleDeclaration =
-							StyleManager.getStyleDeclaration("DragManager");
+			var styleSheet:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DragManager");
 	
 	        if (state == TAB)
 	            newCursorClass = styleSheet.getStyle("copyCursor");
@@ -333,29 +333,30 @@ package net.goozo.mx.dockalbe
 	    }
 		private function handleHitNothing():void
 		{
-			if( !dockSource.floatEnabled 
-			 || dockSource.tabInFloatPanel
-			 || ( dockSource.dockType==DockManager.DRAGTAB && !dockSource.autoCreatePanelEnabled )
+			if (!dockSource.floatEnabled 
+			 || dockSource.panelType == DockManager.FLOATPANEL
+			 || (dockSource.dockType == DockManager.DRAGTAB && !dockSource.autoCreatePanelEnabled)
 			){
 				updateState(DISABLE);
-			}else{
+			}
+			else
+			{
 				updateState(FLOAT);
 			}
 		}
 		
 		private function handleDockComplete(e:MouseEvent):void
 		{
-
-			switch(state)
+			switch (state)
 			{
 				case TAB:
 				{
-					finder.lastTabNav.dockIn(dockSource,finder.lastBtn,finder.lastPosition);
+					finder.lastTabNav.dockIn(dockSource, finder.lastBtn, finder.lastPosition);
 					break;
 				}
 				case PANEL:
 				{
-					movePanel(Container(finder.lastAccepter),finder.lastPosition);
+					movePanel(Container(finder.lastAccepter), finder.lastPosition);
 					break;
 				}
 				case FLOAT:
@@ -366,100 +367,116 @@ package net.goozo.mx.dockalbe
 			}
 			endDock();
 		}	
-		public function movePanel(accepter:Container,side:String):void
+		public function movePanel(accepter:Container, side:String):void
 		{
 			var newPanel:DockablePanel;
-			if(dockSource.dockType==DockManager.DRAGTAB)
+			if (dockSource.dockType == DockManager.DRAGTAB)
 			{
-				newPanel=new DockablePanel(dockSource.targetChild);
-			}else if(dockSource.dockType==DockManager.DRAGPANNEL){
+				newPanel = new DockablePanel(dockSource.targetChild);
+			}
+			else if (dockSource.dockType == DockManager.DRAGPANNEL)
+			{
 				newPanel = dockSource.targetPanel;
-			}else{
+				if (newPanel.parent)
+				{
+					newPanel.parent.removeChild(newPanel);
+				}
+			}
+			else
+			{
 				newPanel = new DockablePanel();
 			}
-			switch(side)
+			
+			switch (side)
 			{
 				case DockManager.LEFT:
 				case DockManager.RIGHT:
-					insertPanelH(newPanel,accepter,side);
+					insertPanelH(newPanel, accepter, side);
 					return;
 				case DockManager.TOP:
 				case DockManager.BOTTOM:
-					insertPanelV(newPanel,accepter,side);
+					insertPanelV(newPanel, accepter, side);
 					return;
 			}
 		}
 		private function floatPanel():void
 		{
 			var newPanel:FloatPanel;
-			if(dockSource.dockType==DockManager.DRAGTAB)
+			if (dockSource.dockType == DockManager.DRAGTAB)
 			{
 				newPanel = new FloatPanel(dockSource.targetChild);
-			}else if(dockSource.dockType==DockManager.DRAGPANNEL){
+			}
+			else if (dockSource.dockType == DockManager.DRAGPANNEL)
+			{
 				newPanel = new FloatPanel(dockSource.targetTabNav);
-			}else{
-				newPanel = new FloatPanel(); 
+			}
+			else
+			{
+				newPanel = new FloatPanel();
 			}
 			
-			DockManager.app.addChild(newPanel);
+			dockCanvas.addChild(newPanel);
 			
-			var boundsRect:Rectangle = dragImage.getBounds(app);
-			newPanel.move(boundsRect.x,boundsRect.y);
+			var boundsRect:Rectangle = dragImage.getBounds(dockCanvas);
+			newPanel.move(boundsRect.x, boundsRect.y);
 		}
 				
-		private function insertPanelH(dragPanel:DockablePanel,accepter:Container,side:String):void
+		private function insertPanelH(dragPanel:DockablePanel, accepter:Container, side:String):void
 		{
 			var dAccepter:DockableHDividedBox;
-			var accepterIndex:int=0;
-			if(accepter.parent is DockableHDividedBox)
+			var accepterIndex:int = 0;
+			if (accepter.parent is DockableHDividedBox)
 			{
 				dAccepter = DockableHDividedBox(accepter.parent);
 				accepterIndex = dAccepter.getChildIndex(accepter);
-			}else{
+			}
+			else
+			{
 				dAccepter = new DockableHDividedBox();
-				DockHelper.replace(accepter,dAccepter);
-				accepter.percentWidth = 100;
+				DockHelper.replace(accepter, dAccepter);
 				dAccepter.addChild(accepter);
 			}
 			dragPanel.percentWidth = accepter.percentWidth/4;
 			accepter.percentWidth *= 0.75;
 			
-			switch(side)
+			switch (side)
 			{
 				case DockManager.LEFT:
-					dAccepter.addChildAt(dragPanel,accepterIndex);
-					return;	
+					dAccepter.addChildAt(dragPanel, accepterIndex);
+					return;
 				case DockManager.RIGHT:
-					dAccepter.addChildAt(dragPanel,accepterIndex+1);
-					return;				
+					dAccepter.addChildAt(dragPanel, accepterIndex+1);
+					return;
 			}
 
 		}
-		private function insertPanelV(dragPanel:DockablePanel,accepter:Container,side:String):void
+		private function insertPanelV(dragPanel:DockablePanel, accepter:Container, side:String):void
 		{
 			var dAccepter:DockableVDividedBox;
-			var accepterIndex:int=0;
-			if(accepter.parent is DockableVDividedBox)
+			var accepterIndex:int = 0;
+			if (accepter.parent is DockableVDividedBox)
 			{
 				dAccepter = DockableVDividedBox(accepter.parent);
 				accepterIndex = dAccepter.getChildIndex(accepter);
-			}else{
+			}
+			else
+			{
 				dAccepter = new DockableVDividedBox();
-				DockHelper.replace(accepter,dAccepter);
+				DockHelper.replace(accepter, dAccepter);
 				accepter.percentHeight = 100;
 				dAccepter.addChild(accepter);
 			}
 			dragPanel.percentHeight = accepter.percentHeight/4;
 			accepter.percentHeight *= 0.75;
 			
-			switch(side)
+			switch (side)
 			{
 				case DockManager.TOP:
-					dAccepter.addChildAt(dragPanel,accepterIndex);
-					return;	
+					dAccepter.addChildAt(dragPanel, accepterIndex);
+					return;
 				case DockManager.BOTTOM:
-					dAccepter.addChildAt(dragPanel,accepterIndex+1);
-					return;				
+					dAccepter.addChildAt(dragPanel, accepterIndex+1);
+					return;
 			}
 		}
 		

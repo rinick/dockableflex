@@ -8,6 +8,7 @@
 	{
 		function get floatEnabled():Boolean;
 		function closeChild():void;
+		function set panelType(value:int):void;
 	}
 	
 }

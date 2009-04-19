@@ -1,8 +1,10 @@
 package net.goozo.mx.dockalbe
 {	
 	import flash.display.DisplayObject;
+	import flash.geom.Rectangle;
 	
 	import mx.containers.VDividedBox;
+	import mx.core.Container;
 	import mx.core.UIComponent;
 
 [IconFile("DockableVDividedBox.png")]
@@ -15,20 +17,12 @@ package net.goozo.mx.dockalbe
 	 *  according to the layout of the DockablePanel instances.
 	 */
 	public class DockableVDividedBox extends VDividedBox implements IDockableDividedBox
-	{		
+	{
 		public function DockableVDividedBox()
 		{
 			super();
 		}
-		/**
-		 *  @private
-		 */
-		override protected function createChildren():void
-		{
-			super.createChildren();
-			DockManager.newDockableApp(this);
-		}
-		
+
 		/**
 		 *  If there is only one child after the removing.
 		 *  The DockableVDividedBox itself will be removed, and its child
@@ -37,74 +31,88 @@ package net.goozo.mx.dockalbe
 		override public function removeChild(child:DisplayObject):DisplayObject
 		{
 			var retObj:DisplayObject = super.removeChild(child);
-
 			callLater(removeSelf);
-			
 			return retObj;
 		}
 		private function removeSelf():void
 		{
-			if( numChildren == 0 )
+			if (DockManager.isDocking)
 			{
-				if(parent)
+				callLater(removeSelf);
+				return;
+			}
+			if (numChildren == 0)
+			{
+				if (parent)
 				{
 					parent.removeChild(this);
 				}			
 			}
-			else if( numChildren == 1
-			      && ( getChildAt(0) is IDockableDividedBox || parent is IDockableDividedBox )
+			else if (numChildren == 1
+			      //&& (getChildAt(0) is IDockableDividedBox || parent is IDockableDividedBox)
 			){
-				var onlyChild:UIComponent = UIComponent(getChildAt(0));
+				var onlyChild:UIComponent = getChildAt(0) as UIComponent;
 
 				removeChild(onlyChild);
 				
-				DockHelper.replace(this,onlyChild);
+				DockHelper.replace(this, onlyChild);
 			}	
+		}
+		/**
+		 *  @private
+		 */
+		override public function addChild(child:DisplayObject):DisplayObject
+		{
+			return addChildAt(child, numChildren);
 		}
 		/**
 		 *  @private
 		 */
 		override public function addChildAt(child:DisplayObject, index:int):DisplayObject
 		{
-			var uChild:UIComponent = UIComponent(child);
-			if( (uChild is DockableVDividedBox) && uChild.initialized )
+			var uChild:UIComponent = child as UIComponent;
+			if ((uChild is DockableVDividedBox) && uChild.initialized)
 			{
-				var dChild:DockableVDividedBox = DockableVDividedBox(uChild);
+				var dChild:DockableVDividedBox = uChild as DockableVDividedBox;
 				
-				var indexOffset:Number=0;
-				var persentOffset:Number = dChild.height / height;
+				var indexOffset:Number = 0;
 				
-
-				while(dChild.numChildren>0)
+				while (dChild.numChildren > 0)
 				{
-					var subChild:UIComponent = UIComponent(dChild.removeChildAt(0));
-					subChild.percentHeight *= persentOffset;
+					var subChild:UIComponent = dChild.removeChildAt(0) as UIComponent;
 					subChild.percentWidth = 100;
 					
-					super.addChildAt(subChild,index+indexOffset);
+					super.addChildAt(subChild, index+indexOffset);
 					indexOffset++;
-				}				
-			}else{
-				uChild.percentWidth = 100;
-				super.addChildAt(uChild,index);
+				}
+				for (var i:int = 0; i < numChildren; ++i)
+				{
+					(getChildAt(i) as UIComponent).percentHeight = getChildAt(i).height * 100 / height;
+				}	
 			}
-
+			else
+			{
+				uChild.percentWidth = 100;
+				super.addChildAt(uChild, index);
+			}
+			callLater(removeSelf);
 			return child;
 		}
+
 		/**
 		 *  @private
 		 */
 		override public function get explicitMinWidth():Number
 		{
 			var superExplicitMinWidth:Number = super.explicitMinWidth;
-			if(!isNaN(superExplicitMinWidth))
+			if (!isNaN(superExplicitMinWidth))
 			{
 				return superExplicitMinWidth;
 			}
-			var mMinWidth:Number = 0;	
-			for(var i:int=0 ; i<numChildren ; ++i)
+			var mMinWidth:Number = 0;
+			for (var i:int = 0; i < numChildren; ++i)
 			{
-				mMinWidth = Math.max( mMinWidth , UIComponent(getChildAt(i)).minWidth );
+				mMinWidth = Math.max(mMinWidth , (getChildAt(i) as UIComponent).minWidth);
 			}
 			return mMinWidth + getStyle("paddingLeft")+ getStyle("paddingRight");
 		}
@@ -114,21 +122,20 @@ package net.goozo.mx.dockalbe
 		override public function get explicitMinHeight():Number
 		{
 			var superExplicitMinHeight:Number = super.explicitMinHeight;
-			if(!isNaN(superExplicitMinHeight))
+			if (!isNaN(superExplicitMinHeight))
 			{
 				return superExplicitMinHeight;
 			}
 			var mMinHeight:Number = getStyle("paddingTop")
 								 + getStyle("paddingBottom")
-								 + getStyle("verticalGap") * numDividers ;
-			var i:int;					 
-			for( i=0 ; i<numChildren ; ++i )
+								 + getStyle("verticalGap") * numDividers;
+			var i:int;
+			for (i = 0; i < numChildren; ++i)
 			{
-				mMinHeight += UIComponent(getChildAt(i)).minHeight;
+				mMinHeight += (getChildAt(i) as UIComponent).minHeight;
 			}
 
 			return mMinHeight;
 		}
-	
 	}
 }

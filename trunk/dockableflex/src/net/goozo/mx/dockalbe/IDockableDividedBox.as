@@ -6,6 +6,5 @@ package net.goozo.mx.dockalbe
 
 	public interface IDockableDividedBox extends IContainer
 	{
-		
 	}
 }
