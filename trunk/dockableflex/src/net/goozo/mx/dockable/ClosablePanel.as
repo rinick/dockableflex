@@ -1,6 +1,7 @@
 package net.goozo.mx.dockable
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	
 	import mx.containers.TitleWindow;
@@ -137,7 +138,8 @@ package net.goozo.mx.dockable
 				if (child is IDockableContainer)
 				{
 					dockContainer = IDockableContainer(child);
-					super.addChildAt(dockContainer as DisplayObject, 0);		
+					super.addChildAt(dockContainer as DisplayObject, 0);
+					title = (dockContainer as Container).label;
 				}
 				else
 				{
