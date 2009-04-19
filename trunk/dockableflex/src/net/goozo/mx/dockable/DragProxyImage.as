@@ -1,4 +1,4 @@
-package net.goozo.mx.dockalbe
+package net.goozo.mx.dockable
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
