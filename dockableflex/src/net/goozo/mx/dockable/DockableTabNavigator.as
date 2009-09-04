@@ -158,7 +158,7 @@ package net.goozo.mx.dockable
 		 */
 		internal function dockAsk(source:DockSource, btn:UIComponent, position:String):Boolean
 		{
-			if (multiTabEnabled
+			if (multiTabEnabled && tabBar.getChildByName(btn.name)!=null
 			 && (source.targetChild != selectedChild || tabBar.getChildIndex(btn) != tabBar.selectedIndex)
 			 && dockId == source.dockId
 			 && (source.dockType == DockManager.DRAGTAB || source.targetTabNav != this)
