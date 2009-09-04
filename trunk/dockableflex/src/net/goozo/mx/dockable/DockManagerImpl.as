@@ -7,6 +7,7 @@ package net.goozo.mx.dockable
 	import flash.geom.Rectangle;
 	
 	import mx.containers.Canvas;
+	import mx.containers.VBox;
 	import mx.core.Application;
 	import mx.core.Container;
 	import mx.core.IFlexDisplayObject;
@@ -414,8 +415,9 @@ package net.goozo.mx.dockable
 			{
 				newPanel = new FloatPanel();
 			}
+
 			
-			dockCanvas.addChild(newPanel);
+			dockCanvas.addChild(newPanel);			
 			
 			var boundsRect:Rectangle = dragImage.getBounds(dockCanvas);
 			newPanel.move(boundsRect.x, boundsRect.y);
