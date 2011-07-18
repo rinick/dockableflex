@@ -9,6 +9,7 @@ package net.goozo.mx.dockable
 	import mx.core.Container;
 	import mx.core.UIComponent;
 	import mx.core.Application;
+	import mx.core.FlexGlobals;
 	
 [ExcludeClass]	
 	internal class DockHelper
@@ -42,7 +43,7 @@ package net.goozo.mx.dockable
 		public function findCanvas(panel:DockablePanel):Container
 		{
 			var getTar:DisplayObject = panel;
-			while (getTar != Application.application)
+			while (getTar != FlexGlobals.topLevelApplication)
 			{
 				if (getTar is Canvas)
 				{
@@ -52,7 +53,7 @@ package net.goozo.mx.dockable
 
 				getTar = getTar.parent;
 			}
-			targetCanvas = Application.application as Container;
+			targetCanvas = FlexGlobals.topLevelApplication as Container;
 			return targetCanvas;
 		}
 
@@ -61,7 +62,7 @@ package net.goozo.mx.dockable
 			var getTar:DisplayObject = target;
 			
 			var nFind:int = 0;
-			while (!(getTar is ClosablePanel) && getTar != Application.application)
+			while (!(getTar is ClosablePanel) && getTar != FlexGlobals.topLevelApplication)
 			{
 				if (getTar is DockableTabNavigator)
 				{
@@ -92,7 +93,7 @@ package net.goozo.mx.dockable
 		{
 			var getTar:DisplayObject = target;
 			
-			while (!(getTar is IDockableDividedBox) && getTar != Application.application)
+			while (!(getTar is IDockableDividedBox) && getTar != FlexGlobals.topLevelApplication)
 			{
 				if (getTar is DockablePanel)
 				{

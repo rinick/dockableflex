@@ -87,13 +87,13 @@ package net.goozo.mx.dockable
 		 */
 		public function closeChild():void
 		{
-			if (selectedChild is IDockableTabChild
-			 && IDockableTabChild(selectedChild).closeTabEnabled
-			){
-			 	if (IDockableTabChild(selectedChild).closeTab())
-			 	{
-			 		removeChild(selectedChild);
-			 	}
+			if (!(selectedChild is IDockableTabChild)
+			 || IDockableTabChild(selectedChild).closeTabEnabled)
+			{
+			 	//if (IDockableTabChild(selectedChild).closeTab())
+			 	//{
+			 		removeChild(selectedChild as DisplayObject);
+			 	//}
 			 }
 		}
 	}
