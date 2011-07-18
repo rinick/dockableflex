@@ -1,6 +1,7 @@
 package net.goozo.mx.dockable
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
@@ -10,13 +11,14 @@ package net.goozo.mx.dockable
 	import mx.containers.VBox;
 	import mx.core.Application;
 	import mx.core.Container;
+	import mx.core.FlexGlobals;
 	import mx.core.IFlexDisplayObject;
 	import mx.core.UIComponent;
 	import mx.managers.CursorManager;
 	import mx.managers.DragManager;
 	import mx.styles.CSSStyleDeclaration;
 	import mx.styles.StyleManager;
-
+	import mx.managers.SystemManager;
 
 	internal class DockManagerImpl
 	{
@@ -79,7 +81,7 @@ package net.goozo.mx.dockable
 			{
 				return finder.targetCanvas;
 			}
-			return Application.application as Container;
+			return FlexGlobals.topLevelApplication as Container;
 		}				
 	
 		private function createDockHint():IFlexDisplayObject
@@ -90,7 +92,7 @@ package net.goozo.mx.dockable
 			var hintRadius:Number = 5;
 			var hintAlpha:Number = 0.5;
 			
-			var dockHintStyle:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DockHint");
+			var dockHintStyle:CSSStyleDeclaration = FlexGlobals.topLevelApplication.styleManager.getMergedStyleDeclaration("DockHint");
 			
 			if (dockHintStyle!= null)
 			{
@@ -121,6 +123,34 @@ package net.goozo.mx.dockable
 			dragInitiator.systemManager.popUpChildren.addChild(DisplayObject(dockHint));
 			return dockHint;
 		}
+		
+		protected function removeDockHint():void
+		{
+    		if (dockHint)
+	    	{
+        		var parent:DisplayObjectContainer = dockHint.parent;
+        		if (parent is SystemManager) {
+		    		(parent as SystemManager).popUpChildren.removeChild(DisplayObject(dockHint));
+    		   	} else {
+            		parent.removeChild(DisplayObject(dockHint));
+				}
+				dockHint = null;
+	   	 	}
+		}
+		
+		/*
+		//another proposed
+		protected function removeDockHint():void
+		{
+  			if (dockHint)
+  			{
+    			(dockHint as UIComponent).systemManager.popUpChildren.removeChild(DisplayObject(dockHint));
+			//  dockHint.parent.removeChild(DisplayObject(dockHint));
+    			dockHint = null;
+  			}
+		}
+
+		//original
 		protected function removeDockHint():void
 		{
 			if (dockHint)
@@ -128,7 +158,8 @@ package net.goozo.mx.dockable
 				dockHint.parent.removeChild(DisplayObject(dockHint));
 				dockHint = null;
 			}
-		}
+		}*/
+		
 		private function createDragProxyImage(source:UIComponent, e:MouseEvent):DragProxyImage
 		{
 			dragImage = new DragProxyImage();
@@ -136,6 +167,34 @@ package net.goozo.mx.dockable
 			dragImage.dragSource(source, e);
 			return dragImage;
 		}
+		
+		private function removeDragProxyImage():void
+		{
+  		if (dragImage)
+  		{
+		      var parent:DisplayObjectContainer = dragImage.parent;
+    		  if (parent is SystemManager) {
+          		(parent as SystemManager).popUpChildren.removeChild(dragImage);
+		      } else {
+        		dragImage.parent.removeChild(dragImage);
+      		}
+    		dragImage = null;
+		  }
+		}
+
+		/*
+		//another proposed
+		private function removeDragProxyImage():void
+		{
+  			if (dragImage)
+  			{
+    			dragImage.systemManager.popUpChildren.removeChild(dragImage);
+				// dragImage.parent.removeChild(dragImage);
+    			dragImage = null;
+  			}		
+		}
+		
+		//original
 		private function removeDragProxyImage():void
 		{
 			if (dragImage)
@@ -143,7 +202,7 @@ package net.goozo.mx.dockable
 				dragImage.parent.removeChild(dragImage);
 				dragImage = null;
 			}		
-		}
+		}*/
 
 		public function get dockType():String
 		{
@@ -238,7 +297,7 @@ package net.goozo.mx.dockable
 		}
 		private function findObjectsUnderPoint():DisplayObject
 		{
-			var flexApp:Container = Application.application as Container;
+			var flexApp:Object = FlexGlobals.topLevelApplication;
 			var targetList:Array = flexApp.getObjectsUnderPoint(new Point(flexApp.stage.mouseX, flexApp.stage.mouseY));
 			
 			var newTarget:DisplayObject;
@@ -313,7 +372,7 @@ package net.goozo.mx.dockable
 	   	public function updateCursor(state:String):void
 	    {
 	        var newCursorClass:Class;
-			var styleSheet:CSSStyleDeclaration = StyleManager.getStyleDeclaration("DragManager");
+			var styleSheet:CSSStyleDeclaration = FlexGlobals.topLevelApplication.styleManager.getMergedStyleDeclaration("mx.managers.DragManager");
 	
 	        if (state == TAB)
 	            newCursorClass = styleSheet.getStyle("copyCursor");

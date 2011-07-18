@@ -3,6 +3,7 @@ package net.goozo.mx.dockable
 	import flash.events.MouseEvent;
 	
 	import mx.controls.TabBar;
+	import mx.core.Container;
 	import mx.core.UIComponent;
 	
 	[Event(name = "childChange", type = "net.goozo.mx.dockable.ChildChangeEvent")]
@@ -145,7 +146,7 @@ package net.goozo.mx.dockable
             var dragInitiator:UIComponent = UIComponent(e.target);
             
             var dockSource:DockSource = new DockSource(DockManager.DRAGTAB, this, dockId);
-            dockSource.targetChild = selectedChild;
+            dockSource.targetChild = selectedChild as Container;
             dockSource.panelType = _panelType;
             dockSource.multiTabEnabled = multiTabEnabled;
             dockSource.floatEnabled = floatEnabled;
@@ -205,9 +206,10 @@ package net.goozo.mx.dockable
 				}
 			}	
 			addChildAt(source.targetChild, tabIndex);
-
-			selectedIndex = tabIndex;
+			
+			callLater(setSelectedIndex, [tabIndex]);
 		}
+				
 		private function panelDroped(source:DockSource, btn:UIComponent, position:String):void
 		{
 			if (source.targetTabNav == this)
@@ -233,6 +235,12 @@ package net.goozo.mx.dockable
 			{
 				addChildAt(source.targetTabNav.removeChildAt(source.targetTabNav.numChildren - 1), tabIndex);
 			}
+		}
+
+		public function setSelectedIndex(value:int):void
+		{
+ 			selectedIndex = value;
+ 			setFocus();
 		}
 	}
 }
